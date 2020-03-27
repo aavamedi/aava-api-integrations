@@ -1,0 +1,32 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-plugin-prettier",
+    "tslint-config-prettier",
+    "tslint-no-circular-imports"
+  ],
+  "linterOptions": {
+    "exclude": ["node_modules/**", "generated/**"]
+  },
+  "rules": {
+    "no-unsafe-any": true,
+    "semicolon": [true, "never"],
+    "triple-equals": true,
+    "object-literal-sort-keys": false,
+    "interface-name": false,
+    "variable-name": false,
+    "no-shadowed-variable": false,
+    "jsx-no-lambda": false,
+    "jsx-no-string-ref": false,
+    "member-access": [true, "no-public"],
+    "prettier": true,
+    "no-floating-promises": true,
+    "max-classes-per-file": false,
+    "await-promise": true,
+    "deprecation": true,
+    "no-invalid-template-strings": true,
+    "no-return-await": true,
+    "no-object-literal-type-assertion": true,
+    "no-unnecessary-type-assertion": true
+  }
+}

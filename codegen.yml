@@ -1,0 +1,17 @@
+require:
+  - ts-node/register
+overwrite: true
+schema: ${SCHEMA_DIR}/*.graphql
+generates:
+  generated/aava-api-types.ts:
+    documents: ${SCHEMA_DIR}/*.graphql
+    config:
+      scalars:
+        Date: string
+        UUID: string
+        SSN: string
+        MediumString: string
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - add: "/* tslint:disable */"

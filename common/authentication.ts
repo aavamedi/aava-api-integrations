@@ -1,9 +1,11 @@
 import axios from "axios"
-import { AavaApiIntegrationsConfiguration } from "./model"
+import { AavaApiIntegrationsConfiguration } from "./configuration"
+import { stdout } from "process"
 
-export const getAuthToken = async (
+export const getBearerToken = async (
   configuration: AavaApiIntegrationsConfiguration
 ): Promise<string> => {
+  stdout.write("Authenticating... ")
   const basicAuth = Buffer.from(
     `${configuration.clientId}:${configuration.clientSecret}`
   ).toString("base64")
@@ -23,5 +25,7 @@ export const getAuthToken = async (
     payload,
     options
   )
-  return response.data.access_token
+  const bearerToken = `Bearer ${response.data.access_token}`
+  stdout.write("done\n")
+  return bearerToken
 }

@@ -10,14 +10,19 @@ This code is provided as-is, without any warranties. You are free to use it as y
 
 # Implementations
 
-## Apollo-client
+## GraphQL-client
 
-The Apollo-client implementation uses apollo-client to communicate with the GraphQL endpoint. This is the recommended method.
+The GraphQL-client implementation uses apollo-client to communicate with the GraphQL server.
+This is the recommended method.
+The implementation utilizes type definitions generated using graphql-codegen.
 
-## REST
+## HTTP-client
 
-The REST client uses plain REST to communicate with the GraphQL API. This is useful if you want to keep external dependecies
+The HTTP client uses plain HTTP to communicate with the GraphQL API. This is useful if you want to keep external dependecies
 (or GraphQL competency) to minimum.
+
+Please note that as GraphQL has deviated from REST, some practices, such as relying only on HTTP response codes, are not sufficient.
+The reason for including this implementation is merely to demonstrate that it _can_ be used.
 
 # Running
 
@@ -26,7 +31,7 @@ fill in the endpoint address, credentials and organization identification all pr
 
 To install dependencies run `yarn install`.
 
-To run either application, change to the corresponding directory (`apollo-client` or `rest-client`) and run `yarn run cli --help` for further instructions.
+To run either application, change to the corresponding directory (`graphql-client` or `http-client`) and run `yarn run cli --help` for further instructions.
 You can run `yarn run cli hello` to verify that everything is set up correctly and the credentials and endpoint are working.
 
 Examples of each input type are provided in the `examples` directory. Please do not send these examples to your production API instance.

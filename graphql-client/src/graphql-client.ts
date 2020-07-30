@@ -1,7 +1,7 @@
 import ApolloClient, { gql } from "apollo-boost"
 import fetch from "cross-fetch"
-import { AavaApiIntegrationsConfiguration } from "../../common/model"
-import { getAuthToken } from "../../common/authentication"
+import { AavaApiIntegrationsConfiguration } from "../../common/configuration"
+import { getBearerToken } from "../../common/authentication"
 import { ExecutionResult } from "graphql"
 import {
   DepartmentInput,
@@ -13,9 +13,7 @@ import { stdout } from "process"
 const getApolloClient = async (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
-  stdout.write("Authorizing... ")
-  const bearerToken = `Bearer ${await getAuthToken(configuration)}`
-  stdout.write("done\n")
+  const bearerToken = await getBearerToken(configuration)
 
   stdout.write(
     `Initializing client with endpoint ${configuration.aavaApiServer}\n`

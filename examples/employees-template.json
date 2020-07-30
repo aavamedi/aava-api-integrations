@@ -1,0 +1,29 @@
+[
+  {
+    "externalId": "ID!",
+    "identifier": "MediumString",
+    "ssn": "SSN!",
+    "callName": "MediumString!",
+    "lastName": "MediumString!",
+    "emailAddress": "MediumString",
+    "privateEmailAddress": "MediumString",
+    "localPhoneNumber": "MediumString",
+    "phoneCountryCode": "MediumString",
+    "startDate": "Date!",
+    "endDate": "Date",
+    "departments": [
+      {
+        "externalId": "ID!",
+        "startDate": "Date!",
+        "endDate": "Date"
+      }
+    ],
+    "supervisors": [
+      {
+        "externalId": "ID!",
+        "startDate": "Date!",
+        "endDate": "Date"
+      }
+    ]
+  }
+]

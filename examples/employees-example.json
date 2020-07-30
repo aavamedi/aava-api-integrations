@@ -1,0 +1,55 @@
+[
+  {
+    "externalId": "emp-1",
+    "identifier": "10000001",
+    "ssn": "020472-9613",
+    "callName": "Pertti",
+    "lastName": "Järvelä",
+    "emailAddress": "pertti.jarvela@jotain.fi",
+    "privateEmailAddress": "peja72@privaatti.fi",
+    "localPhoneNumber": "090999888",
+    "phoneCountryCode": "+358",
+    "startDate": "1998-03-25",
+    "departments": [
+      {
+        "externalId": "a1",
+        "startDate": "2005-03-01",
+        "endDate": "2009-01-01"
+      },
+      {
+        "externalId": "a2",
+        "startDate": "2009-01-01"
+      }
+    ],
+    "supervisors": []
+  },
+  {
+    "externalId": "emp-2",
+    "identifier": "100000002",
+    "ssn": "130460-978M",
+    "callName": "Joonas",
+    "lastName": "Ankkala",
+    "emailAddress": "joonas.ankkala@jotain.fi",
+    "privateEmailAddress": "joonas.ankkala@geemeili.com",
+    "localPhoneNumber": "090333444",
+    "phoneCountryCode": "+358",
+    "startDate": "2005-03-01",
+    "departments": [
+      {
+        "externalId": "a1",
+        "startDate": "2005-03-01",
+        "endDate": "2009-01-01"
+      },
+      {
+        "externalId": "a2",
+        "startDate": "2009-01-01"
+      }
+    ],
+    "supervisors": [
+      {
+        "externalId": "emp-1",
+        "startDate": "2005-03-01"
+      }
+    ]
+  }
+]

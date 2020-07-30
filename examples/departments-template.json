@@ -1,0 +1,11 @@
+[
+  {
+    "externalId": "ID!",
+    "names": {
+      "fi": "MediumString",
+      "sv": "MediumString",
+      "en": "MediumString"
+    },
+    "code": "MediumString"
+  }
+]

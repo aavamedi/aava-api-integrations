@@ -1,0 +1,8 @@
+[
+  {
+    "externalId": "ID!",
+    "startDate": "Date!",
+    "endDate": "Date",
+    "approvalType": "Supervisor | Doctor | Nurse"
+  }
+]

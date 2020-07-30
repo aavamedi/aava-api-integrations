@@ -7,11 +7,16 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  /** Non-empty String with less than 1024 characters */
   MediumString: string,
+  /** Finnish social security number */
   SSN: string,
+  /** Date in ISO 8601 format */
   Date: string,
+  /** Universally Unique Identifier */
   UUID: string,
 };
+
 
 /** Type of the approval for absence */
 export enum AbsenceApprovalType {
@@ -33,6 +38,11 @@ export type AbsenceInput = {
   /** Type of absence approval */
   approvalType?: Maybe<AbsenceApprovalType>,
 };
+
+export enum CacheControlScope {
+  Public = 'PUBLIC',
+  Private = 'PRIVATE'
+}
 
 
 export type DepartmentInput = {
@@ -145,53 +155,4 @@ export type Query = {
 
 
 
-export type HelloQueryVariables = {};
-
-
-export type HelloQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'hello'>
-);
-
-export type ImportDepartmentsMutationVariables = {
-  organizationExternalId: Scalars['ID'],
-  departments: Array<DepartmentInput>
-};
-
-
-export type ImportDepartmentsMutation = (
-  { __typename?: 'Mutation' }
-  & { importDepartments: (
-    { __typename?: 'ImportPushResponse' }
-    & Pick<ImportPushResponse, 'messageId'>
-  ) }
-);
-
-export type ImportEmployeesMutationVariables = {
-  organizationExternalId: Scalars['ID'],
-  employees: Array<EmployeeInput>
-};
-
-
-export type ImportEmployeesMutation = (
-  { __typename?: 'Mutation' }
-  & { importEmployees: (
-    { __typename?: 'ImportPushResponse' }
-    & Pick<ImportPushResponse, 'messageId'>
-  ) }
-);
-
-export type ImportAbsencesMutationVariables = {
-  organizationExternalId: Scalars['ID'],
-  absences: Array<AbsenceInput>
-};
-
-
-export type ImportAbsencesMutation = (
-  { __typename?: 'Mutation' }
-  & { importAbsences: (
-    { __typename?: 'ImportPushResponse' }
-    & Pick<ImportPushResponse, 'messageId'>
-  ) }
-);
 

@@ -1,14 +1,14 @@
 import axios from "axios"
-import { AavaApiIntegrationsConfiguration } from "./configuration"
+import { AavaApiIntegrationsConfiguration } from "./model"
 
-export const getOktaAuthToken = async (
+export const getAuthToken = async (
   configuration: AavaApiIntegrationsConfiguration
-) => {
+): Promise<string> => {
   const basicAuth = Buffer.from(
     `${configuration.clientId}:${configuration.clientSecret}`
   ).toString("base64")
 
-  const url = configuration.oktaAuthenticationUrl
+  const url = configuration.aavaApiServer + "/auth/token"
   const options = {
     headers: {
       Accept: "application/json",
@@ -18,6 +18,10 @@ export const getOktaAuthToken = async (
   }
 
   const payload = "grant_type=client_credentials&scope=api:read"
-  const response = await axios.post(url, payload, options)
-  return response.data
+  const response = await axios.post<{ access_token: string }>(
+    url,
+    payload,
+    options
+  )
+  return response.data.access_token
 }

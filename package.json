@@ -16,7 +16,6 @@
     "tslint-plugin-prettier": "^2.3.0"
   },
   "dependencies": {
-    "@okta/jwt-verifier": "1.0.0",
     "axios": "0.19.2",
     "graphql": "14.6.0",
     "ts-node": "8.6.2",
@@ -24,7 +23,6 @@
   },
   "scripts": {
     "graphql-codegen": "graphql-codegen --config codegen.yml",
-    "postinstall": "(cd src/apollo-client && yarn install)",
-    "cli-apollo": "ts-node src/cli/main-graphql"
+    "postinstall": "(cd apollo-client && yarn install)"
   }
 }

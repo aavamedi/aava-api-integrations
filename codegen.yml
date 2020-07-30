@@ -4,7 +4,6 @@ overwrite: true
 schema: ${SCHEMA_DIR}/*.graphql
 generates:
   generated/aava-api-types.ts:
-    documents: ${SCHEMA_DIR}/*.graphql
     config:
       scalars:
         Date: string

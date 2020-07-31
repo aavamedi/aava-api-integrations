@@ -31,8 +31,8 @@ fill in the endpoint address, credentials and organization identification all pr
 
 To install dependencies run `yarn install`.
 
-To run either application, change to the corresponding directory (`graphql-client` or `http-client`) and run `yarn run cli --help` for further instructions.
-You can run `yarn run cli hello` to verify that everything is set up correctly and the credentials and endpoint are working.
+To run either application, change to the corresponding directory (`graphql-client` or `http-client`) and run `yarn cli --help` for further instructions.
+You can run `yarn cli hello` to verify that everything is set up correctly and the credentials and endpoint are working.
 
 Examples of each input type are provided in the `examples` directory. Please do not send these examples to your production API instance.
 

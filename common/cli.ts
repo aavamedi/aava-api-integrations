@@ -59,7 +59,7 @@ export const commandLineInterface = (
   importAbsencesCommand: APICommand
 ) => {
   return yargs
-    .scriptName("yarn run cli")
+    .scriptName("yarn cli")
     .command("hello", "Get a 'hello' from Aava-API", helloWorldCommand)
     .command(
       "departments <filename>",

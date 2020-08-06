@@ -6,18 +6,18 @@ import { ExecutionResult } from "graphql"
 import {
   DepartmentInput,
   EmployeeInput,
-  AbsenceInput
+  AbsenceInput,
+  ProcessingStatus,
+  ProcessingState
 } from "../../generated/aava-api-types"
 import { stdout } from "process"
 
 const getApolloClient = async (
-  configuration: AavaApiIntegrationsConfiguration
+  configuration: AavaApiIntegrationsConfiguration,
+  noAuthorization?: boolean
 ) => {
-  const bearerToken = await getBearerToken(configuration)
+  const bearerToken = !noAuthorization && (await getBearerToken(configuration))
 
-  stdout.write(
-    `Initializing client with endpoint ${configuration.aavaApiServer}\n`
-  )
   return new ApolloClient({
     fetch,
     uri: `${configuration.aavaApiServer}`,
@@ -29,25 +29,28 @@ const getApolloClient = async (
 
 export const helloWorld = async (
   configuration: AavaApiIntegrationsConfiguration
-): Promise<ExecutionResult> => {
+): Promise<string | undefined> => {
   const client = await getApolloClient(configuration)
-  const result = await client.query({
+  const result = await client.query<{ hello: boolean }>({
     query: gql`
       {
         hello
       }
     `
   })
-  return result
+  assertNoErrors(result)
+  return result.data.hello ? "yes" : "no"
 }
 
 export const importDepartments = async (
   configuration: AavaApiIntegrationsConfiguration,
   departments: DepartmentInput[]
-): Promise<ExecutionResult> => {
+): Promise<string | undefined> => {
   const client = await getApolloClient(configuration)
   stdout.write("Sending mutation importDepartments... ")
-  const result = await client.mutate({
+  const result = await client.mutate<{
+    importDepartments: { messageId: string }
+  }>({
     mutation: gql`
       mutation importDepartments(
         $organizationId: ID!
@@ -66,17 +69,20 @@ export const importDepartments = async (
       departments
     }
   })
+  assertNoErrors(result)
   stdout.write("done\n")
-  return result
+  return result.data?.importDepartments.messageId
 }
 
 export const importEmployees = async (
   configuration: AavaApiIntegrationsConfiguration,
   employees: EmployeeInput[]
-): Promise<ExecutionResult> => {
+): Promise<string | undefined> => {
   const client = await getApolloClient(configuration)
   stdout.write("Sending mutation importEmployees... ")
-  const result = await client.mutate({
+  const result = await client.mutate<{
+    importEmployees: { messageId: string }
+  }>({
     mutation: gql`
       mutation importEmployees(
         $organizationId: ID!
@@ -95,17 +101,20 @@ export const importEmployees = async (
       employees
     }
   })
+  assertNoErrors(result)
   stdout.write("done\n")
-  return result
+  return result.data?.importEmployees.messageId
 }
 
 export const importAbsences = async (
   configuration: AavaApiIntegrationsConfiguration,
   absences: AbsenceInput[]
-): Promise<ExecutionResult> => {
+): Promise<string | undefined> => {
   const client = await getApolloClient(configuration)
   stdout.write("Sending mutation importAbsences... ")
-  const result = await client.mutate({
+  const result = await client.mutate<{
+    importAbsences: { messageId: string }
+  }>({
     mutation: gql`
       mutation importAbsences(
         $organizationId: ID!
@@ -124,6 +133,38 @@ export const importAbsences = async (
       absences
     }
   })
+  assertNoErrors(result)
   stdout.write("done\n")
-  return result
+  return result.data?.importAbsences.messageId
+}
+
+export const getProcessingStatusCommand = (
+  configuration: AavaApiIntegrationsConfiguration
+) => {
+  return async (messageId: string): Promise<ProcessingState> => {
+    const client = await getApolloClient(configuration, true)
+    const result = await client.query<{ processingStatus: ProcessingStatus }>({
+      query: gql`
+        query getProcessingStatus($messageId: ID!) {
+          processingStatus(messageId: $messageId) {
+            importStatus
+          }
+        }
+      `,
+      variables: {
+        messageId
+      }
+    })
+    assertNoErrors(result)
+    return result.data.processingStatus.importStatus
+  }
+}
+
+const assertNoErrors = (result: ExecutionResult) => {
+  if (result.errors) {
+    throw new Error(
+      "GraphQL query resulted in error(s): " +
+        result.errors.map(e => e.message).join(", ")
+    )
+  }
 }

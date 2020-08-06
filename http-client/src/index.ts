@@ -1,19 +1,24 @@
 // tslint:disable: no-console
 
 import { readConfiguration } from "../../common/configuration"
-import { readData, commandLineInterface, formatResult } from "../../common/cli"
+import {
+  readData,
+  commandLineInterface,
+  waitForProcessingResult
+} from "../../common/cli"
 import yargs from "yargs"
 import {
   helloWorld,
   importDepartments,
   importEmployees,
-  importAbsences
+  importAbsences,
+  getProcessingStatusCommand
 } from "./http-client"
 
 const aavaApiIntegrationsConfiguration = readConfiguration()
 
 const helloWorldCommand = async () => {
-  await formatResult(helloWorld(aavaApiIntegrationsConfiguration))
+  console.log("Hello? " + (await helloWorld(aavaApiIntegrationsConfiguration)))
 }
 
 const importDepartmentsCommand = async (
@@ -22,8 +27,9 @@ const importDepartmentsCommand = async (
   }>
 ) => {
   const departments = readData<any>(argv.filename)
-  await formatResult(
-    importDepartments(aavaApiIntegrationsConfiguration, departments)
+  await waitForProcessingResult(
+    importDepartments(aavaApiIntegrationsConfiguration, departments),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
   )
 }
 
@@ -33,8 +39,9 @@ const importEmployeesCommand = async (
   }>
 ) => {
   const employees = readData<any>(argv.filename)
-  await formatResult(
-    importEmployees(aavaApiIntegrationsConfiguration, employees)
+  await waitForProcessingResult(
+    importEmployees(aavaApiIntegrationsConfiguration, employees),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
   )
 }
 
@@ -44,7 +51,10 @@ const importAbsencesCommand = async (
   }>
 ) => {
   const absences = readData<any>(argv.filename)
-  await formatResult(importAbsences(aavaApiIntegrationsConfiguration, absences))
+  await waitForProcessingResult(
+    importAbsences(aavaApiIntegrationsConfiguration, absences),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
+  )
 }
 
 commandLineInterface(

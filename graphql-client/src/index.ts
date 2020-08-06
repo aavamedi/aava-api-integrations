@@ -1,9 +1,9 @@
-// tslint:disable: no-console
 import {
-  importDepartments,
   helloWorld,
+  importDepartments,
   importEmployees,
-  importAbsences
+  importAbsences,
+  getProcessingStatusCommand
 } from "./graphql-client"
 import yargs from "yargs"
 import {
@@ -12,12 +12,17 @@ import {
   AbsenceInput
 } from "../../generated/aava-api-types"
 import { readConfiguration } from "../../common/configuration"
-import { readData, formatResult, commandLineInterface } from "../../common/cli"
+import {
+  readData,
+  waitForProcessingResult,
+  commandLineInterface
+} from "../../common/cli"
 
 const aavaApiIntegrationsConfiguration = readConfiguration()
 
 const helloWorldCommand = async () => {
-  await formatResult(helloWorld(aavaApiIntegrationsConfiguration))
+  // tslint:disable-next-line: no-console
+  console.log("Hello? " + (await helloWorld(aavaApiIntegrationsConfiguration)))
 }
 
 const importDepartmentsCommand = async (
@@ -26,8 +31,9 @@ const importDepartmentsCommand = async (
   }>
 ) => {
   const departments = readData<DepartmentInput[]>(argv.filename)
-  await formatResult(
-    importDepartments(aavaApiIntegrationsConfiguration, departments)
+  await waitForProcessingResult(
+    importDepartments(aavaApiIntegrationsConfiguration, departments),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
   )
 }
 
@@ -37,8 +43,9 @@ const importEmployeesCommand = async (
   }>
 ) => {
   const employees = readData<EmployeeInput[]>(argv.filename)
-  await formatResult(
-    importEmployees(aavaApiIntegrationsConfiguration, employees)
+  await waitForProcessingResult(
+    importEmployees(aavaApiIntegrationsConfiguration, employees),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
   )
 }
 
@@ -48,7 +55,10 @@ const importAbsencesCommand = async (
   }>
 ) => {
   const absences = readData<AbsenceInput[]>(argv.filename)
-  await formatResult(importAbsences(aavaApiIntegrationsConfiguration, absences))
+  await waitForProcessingResult(
+    importAbsences(aavaApiIntegrationsConfiguration, absences),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
+  )
 }
 
 commandLineInterface(

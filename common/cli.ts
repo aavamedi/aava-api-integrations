@@ -1,11 +1,11 @@
 // tslint:disable: no-console
 import fs from "fs"
-import { ExecutionResult } from "graphql"
 import yargs from "yargs"
+import { promisify } from "util"
 
 export const readData = <T>(filename: string): T => {
   if (!fs.existsSync(filename)) {
-    throw new Error(`💀  File ${filename} not found, exiting.`)
+    throw new Error(`💀  File ${filename} not found`)
   }
 
   console.log(`Reading ${filename}`)
@@ -18,18 +18,28 @@ export const readData = <T>(filename: string): T => {
   ) as T
 }
 
-export const formatResult = async (
-  result: Promise<ExecutionResult | { errors: any; data: any }>
+type StatusCommand = (messageId: string) => Promise<string | undefined>
+
+export const waitForProcessingResult = async (
+  result: Promise<string | undefined>,
+  statusCommand: StatusCommand
 ) => {
   try {
-    const resolved = await result
-    resolved.errors
-      ? console.log(
-          "Query finished with errors:",
-          resolved.data,
-          resolved.errors
-        )
-      : console.log("Query finished, results:", resolved.data)
+    const messageId = await result
+    console.log("Message id", messageId)
+    if (!messageId) {
+      throw new Error("Query finished, but no message id")
+    }
+
+    let times = 20
+    while (times-- > 0) {
+      const status = await statusCommand(messageId)
+      console.log(`Processing status: ${status} (${20 - times}/20)`)
+      if (status === "DONE") {
+        break
+      }
+      await promisify(setTimeout)(2000)
+    }
   } catch (error) {
     // Actual errors from the server may be in error.response.data.errors,
     // which is too deep to be output by console.error
@@ -46,7 +56,7 @@ export const formatResult = async (
   }
 }
 
-type APICommand = (
+type ImportCommand = (
   argv: yargs.Arguments<{
     filename: string
   }>
@@ -54,9 +64,9 @@ type APICommand = (
 
 export const commandLineInterface = (
   helloWorldCommand: () => {},
-  importDepartmentsCommand: APICommand,
-  importEmployeesCommand: APICommand,
-  importAbsencesCommand: APICommand
+  importDepartmentsCommand: ImportCommand,
+  importEmployeesCommand: ImportCommand,
+  importAbsencesCommand: ImportCommand
 ) => {
   return yargs
     .scriptName("yarn cli")

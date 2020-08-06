@@ -3,19 +3,19 @@ import axios from "axios"
 import { AavaApiIntegrationsConfiguration } from "../../common/configuration"
 import { getBearerToken } from "../../common/authentication"
 
-interface GraphQLHTTPResponse {
-  data: any
+interface GraphQLHTTPResponse<T> {
+  data: T
   errors: any
 }
 
-const makeAuthorizedRequest = async (
+const makeAuthorizedRequest = async <T>(
   configuration: AavaApiIntegrationsConfiguration,
   payload: {
     query: string
     variables?: any
   }
-): Promise<GraphQLHTTPResponse> => {
-  const response = await axios.post<GraphQLHTTPResponse>(
+): Promise<GraphQLHTTPResponse<T>> => {
+  const response = await axios.post<GraphQLHTTPResponse<T>>(
     configuration.aavaApiServer,
     payload,
     {
@@ -24,21 +24,32 @@ const makeAuthorizedRequest = async (
       }
     }
   )
+  assertNoErrors(response.data)
   return response.data
+}
+
+const assertNoErrors = (result: GraphQLHTTPResponse<any>) => {
+  if (result.errors) {
+    throw new Error("GraphQL query resulted in error(s)" + result.errors)
+  }
 }
 
 export const helloWorld = async (
   configuration: AavaApiIntegrationsConfiguration
-): Promise<GraphQLHTTPResponse> => {
+): Promise<string> => {
   const payload = { query: "{ hello }" }
 
-  return makeAuthorizedRequest(configuration, payload)
+  const result = await makeAuthorizedRequest<{ hello: boolean }>(
+    configuration,
+    payload
+  )
+  return result.data.hello ? "yes" : "no"
 }
 
 export const importDepartments = async (
   configuration: AavaApiIntegrationsConfiguration,
   departments: any
-): Promise<GraphQLHTTPResponse> => {
+): Promise<string> => {
   const payload = {
     query: `
       mutation importDepartments(
@@ -58,13 +69,17 @@ export const importDepartments = async (
       departments
     }
   }
-  return makeAuthorizedRequest(configuration, payload)
+  return (
+    await makeAuthorizedRequest<{
+      importDepartments: { messageId: string }
+    }>(configuration, payload)
+  ).data.importDepartments.messageId
 }
 
 export const importEmployees = async (
   configuration: AavaApiIntegrationsConfiguration,
   employees: any
-): Promise<GraphQLHTTPResponse> => {
+): Promise<string> => {
   const payload = {
     query: `
       mutation importEmployees(
@@ -84,13 +99,18 @@ export const importEmployees = async (
       employees
     }
   }
-  return makeAuthorizedRequest(configuration, payload)
+  return (
+    await makeAuthorizedRequest<{ importEmployees: { messageId: string } }>(
+      configuration,
+      payload
+    )
+  ).data.importEmployees.messageId
 }
 
 export const importAbsences = async (
   configuration: AavaApiIntegrationsConfiguration,
   absences: any
-): Promise<GraphQLHTTPResponse> => {
+): Promise<string> => {
   const payload = {
     query: `
       mutation importAbsences(
@@ -110,5 +130,30 @@ export const importAbsences = async (
       absences
     }
   }
-  return makeAuthorizedRequest(configuration, payload)
+  return (
+    await makeAuthorizedRequest<{ importAbsences: { messageId: string } }>(
+      configuration,
+      payload
+    )
+  ).data.importAbsences.messageId
+}
+
+export const getProcessingStatusCommand = (
+  configuration: AavaApiIntegrationsConfiguration
+) => {
+  return async (messageId: string): Promise<string> => {
+    const payload = {
+      query: `
+    query {
+      processingStatus(messageId: "${messageId}") {
+        importStatus
+      }
+    }
+  `
+    }
+    const response = await axios.post<
+      GraphQLHTTPResponse<{ processingStatus: { importStatus: string } }>
+    >(configuration.aavaApiServer, payload)
+    return response.data.data.processingStatus.importStatus
+  }
 }

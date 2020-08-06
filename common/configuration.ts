@@ -1,3 +1,4 @@
+// tslint:disable: no-console
 import { readData } from "./cli"
 
 export type AavaApiIntegrationsConfiguration = {
@@ -10,5 +11,7 @@ export type AavaApiIntegrationsConfiguration = {
 const CONFIGURATION_FILE = "../properties.json"
 
 export const readConfiguration = (): AavaApiIntegrationsConfiguration => {
-  return readData<AavaApiIntegrationsConfiguration>(CONFIGURATION_FILE)
+  const conf = readData<AavaApiIntegrationsConfiguration>(CONFIGURATION_FILE)
+  console.log(`Using GraphQL endpoint ` + conf.aavaApiServer)
+  return conf
 }

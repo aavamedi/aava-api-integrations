@@ -112,6 +112,8 @@ export type ImportPushResponse = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  /** Placeholder for empty mutation base type. Has no resolver. */
+  _empty?: Maybe<Scalars['String']>,
   /** Import departments to the Aava-HR application */
   importDepartments: ImportPushResponse,
   /** Import employees to the Aava-HR application */
@@ -148,9 +150,31 @@ export type NamesInput = {
   en?: Maybe<Scalars['MediumString']>,
 };
 
+export enum ProcessingState {
+  Unknown = 'UNKNOWN',
+  InProgress = 'IN_PROGRESS',
+  Failure = 'FAILURE',
+  Done = 'DONE'
+}
+
+export type ProcessingStatus = {
+   __typename?: 'ProcessingStatus',
+  messageId: Scalars['ID'],
+  importStatus: ProcessingState,
+  importType: Scalars['String'],
+  timestamp?: Maybe<Scalars['Int']>,
+};
+
 export type Query = {
    __typename?: 'Query',
   hello: Scalars['Boolean'],
+  /** Get the status of an asynchronously processed message */
+  processingStatus?: Maybe<ProcessingStatus>,
+};
+
+
+export type QueryProcessingStatusArgs = {
+  messageId: Scalars['ID']
 };
 
 

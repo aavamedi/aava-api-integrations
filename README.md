@@ -47,3 +47,6 @@ The repository contains code generated from the GraphQL schemas at [generated/aa
 The code was generated using [graphql-codegen](https://graphql-code-generator.com/)
 
 This step is necessary only when the Aava-API GraphQL schema has been updated and you want to use the new types in your own code.
+
+Please note that the exported schema does _not_ contain operations.
+If it did, response types would not need to be defined inline in graphql-client.ts, generated types could be used instead.

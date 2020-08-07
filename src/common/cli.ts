@@ -66,6 +66,7 @@ export const commandLineInterface = (
   helloWorldCommand: () => {},
   importDepartmentsCommand: ImportCommand,
   importEmployeesCommand: ImportCommand,
+  parseAndImportEmployeesCommand: ImportCommand,
   importAbsencesCommand: ImportCommand
 ) => {
   return yargs
@@ -93,6 +94,19 @@ export const commandLineInterface = (
         }),
       importEmployeesCommand
     )
+    .command(
+      "sympa-employees <filename>",
+      "Parse employees exported from Sympa HR and send results to Aava-API",
+      y =>
+        y.positional("filename", {
+          description:
+            "Path of a Sympa HR export file containing employees to upload",
+          type: "string",
+          demandOption: true
+        }),
+      parseAndImportEmployeesCommand
+    )
+
     .command(
       "absences <filename>",
       "Send absences to Aava-API",

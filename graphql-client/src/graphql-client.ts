@@ -1,7 +1,7 @@
 import ApolloClient, { gql } from "apollo-boost"
 import fetch from "cross-fetch"
-import { AavaApiIntegrationsConfiguration } from "../../common/configuration"
-import { getBearerToken } from "../../common/authentication"
+import { AavaApiIntegrationsConfiguration } from "../../src/common/configuration"
+import { getBearerToken } from "../../src/common/authentication"
 import { ExecutionResult } from "graphql"
 import {
   DepartmentInput,

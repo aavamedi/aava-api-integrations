@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0"
+  xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="Sympa.Api.Entity"
+      xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="DemoAava">
+        <Key>
+          <PropertyRef Name="externalId" />
+          <PropertyRef Name="identifier" />
+          <PropertyRef Name="lastName" />
+        </Key>
+        <Property Name="externalId" Type="Edm.String" Nullable="false" />
+        <Property Name="identifier" Type="Edm.String" Nullable="false" />
+        <Property Name="ssn" Type="Edm.String" />
+        <Property Name="callName" Type="Edm.String" />
+        <Property Name="lastName" Type="Edm.String" Nullable="false" />
+        <Property Name="emailAddress" Type="Edm.String" />
+        <Property Name="privateEmailAddress" Type="Edm.String" />
+        <Property Name="localPhoneNumber" Type="Edm.String" />
+        <Property Name="supervisor" Type="Edm.String" />
+        <NavigationProperty Name="Employments" Type="Collection(Sympa.Api.Entity.Employments__DemoAava__TYPE)" />
+        <NavigationProperty Name="Departments" Type="Collection(Sympa.Api.Entity.Departments__DemoAava__TYPE)" />
+      </EntityType>
+      <EntityType Name="Employments__DemoAava__TYPE" HasStream="false">
+        <Property Name="validFrom" Type="Edm.DateTimeOffset" />
+        <Property Name="startDate" Type="Edm.DateTimeOffset" />
+        <Property Name="endDate" Type="Edm.DateTimeOffset" />
+        <Property Name="validUntil" Type="Edm.DateTimeOffset" />
+        <Property Name="Approval" Type="Edm.Int32" />
+      </EntityType>
+      <EntityType Name="Departments__DemoAava__TYPE" HasStream="false">
+        <Property Name="startDate" Type="Edm.DateTimeOffset" />
+        <Property Name="departmentId" Type="Edm.String" />
+        <Property Name="endDate" Type="Edm.DateTimeOffset" />
+        <Property Name="Approval" Type="Edm.Int32" />
+      </EntityType>
+      <EntityType Name="DemoAavaDepartments">
+        <Key>
+          <PropertyRef Name="name" />
+        </Key>
+        <Property Name="externalId" Type="Edm.String" Nullable="false" />
+        <Property Name="name" Type="Edm.String" Nullable="false" />
+      </EntityType>
+    </Schema>
+    <Schema Namespace="Sympa.Api.OData"
+      xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="Container" m:IsDefaultEntityContainer="true"
+        xmlns:m="http://docs.oasis-open.org/odata/ns/metadata">
+        <EntitySet Name="DemoAava" EntityType="Sympa.Api.Entity.DemoAava" />
+        <EntitySet Name="DemoAavaDepartments" EntityType="Sympa.Api.Entity.DemoAavaDepartments" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

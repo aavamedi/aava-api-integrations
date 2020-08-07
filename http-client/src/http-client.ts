@@ -1,7 +1,7 @@
 // tslint:disable: no-console
 import axios from "axios"
-import { AavaApiIntegrationsConfiguration } from "../../common/configuration"
-import { getBearerToken } from "../../common/authentication"
+import { AavaApiIntegrationsConfiguration } from "../../src/common/configuration"
+import { getBearerToken } from "../../src/common/authentication"
 
 interface GraphQLHTTPResponse<T> {
   data: T

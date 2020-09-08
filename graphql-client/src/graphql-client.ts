@@ -71,7 +71,7 @@ export const importDepartments = async (
   })
   assertNoErrors(result)
   stdout.write("done\n")
-  return result.data? [result.data.importDepartments.messageId] : []
+  return result.data ? [result.data.importDepartments.messageId] : []
 }
 
 export const importEmployees = async (
@@ -135,7 +135,7 @@ export const importAbsences = async (
   })
   assertNoErrors(result)
   stdout.write("done\n")
-  return result.data? [result.data.importAbsences.messageId] : []
+  return result.data ? [result.data.importAbsences.messageId] : []
 }
 
 export const getProcessingStatusCommand = (

@@ -45,7 +45,7 @@ export const helloWorld = async (
 export const importDepartments = async (
   configuration: AavaApiIntegrationsConfiguration,
   departments: DepartmentInput[]
-): Promise<string | undefined> => {
+): Promise<string[]> => {
   const client = await getApolloClient(configuration)
   stdout.write("Sending mutation importDepartments... ")
   const result = await client.mutate<{
@@ -71,13 +71,13 @@ export const importDepartments = async (
   })
   assertNoErrors(result)
   stdout.write("done\n")
-  return result.data?.importDepartments.messageId
+  return result.data? [result.data.importDepartments.messageId] : []
 }
 
 export const importEmployees = async (
   configuration: AavaApiIntegrationsConfiguration,
   employees: EmployeeInput[]
-): Promise<string | undefined> => {
+): Promise<string[]> => {
   const client = await getApolloClient(configuration)
   stdout.write("Sending mutation importEmployees... ")
   const result = await client.mutate<{
@@ -103,13 +103,13 @@ export const importEmployees = async (
   })
   assertNoErrors(result)
   stdout.write("done\n")
-  return result.data?.importEmployees.messageId
+  return result.data ? [result.data.importEmployees.messageId] : []
 }
 
 export const importAbsences = async (
   configuration: AavaApiIntegrationsConfiguration,
   absences: AbsenceInput[]
-): Promise<string | undefined> => {
+): Promise<string[]> => {
   const client = await getApolloClient(configuration)
   stdout.write("Sending mutation importAbsences... ")
   const result = await client.mutate<{
@@ -135,28 +135,28 @@ export const importAbsences = async (
   })
   assertNoErrors(result)
   stdout.write("done\n")
-  return result.data?.importAbsences.messageId
+  return result.data? [result.data.importAbsences.messageId] : []
 }
 
 export const getProcessingStatusCommand = (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
-  return async (messageId: string): Promise<ProcessingState> => {
+  return async (messageIds: string[]): Promise<ProcessingState[]> => {
     const client = await getApolloClient(configuration, true)
-    const result = await client.query<{ processingStatus: ProcessingStatus }>({
+    const result = await client.query<{ processingStatus: ProcessingStatus[] }>({
       query: gql`
-        query getProcessingStatus($messageId: ID!) {
-          processingStatus(messageId: $messageId) {
+        query getProcessingStatus($messageIds: [ID!]!) {
+          processingStatus(messageIds: $messageIds) {
             importStatus
           }
         }
       `,
       variables: {
-        messageId
+        messageIds
       }
     })
     assertNoErrors(result)
-    return result.data.processingStatus.importStatus
+    return result.data.processingStatus.map(({ importStatus }) => importStatus)
   }
 }
 

@@ -49,7 +49,7 @@ export const helloWorld = async (
 export const importDepartments = async (
   configuration: AavaApiIntegrationsConfiguration,
   departments: any
-): Promise<string> => {
+): Promise<string[]> => {
   const payload = {
     query: `
       mutation importDepartments(
@@ -69,17 +69,18 @@ export const importDepartments = async (
       departments
     }
   }
-  return (
+  const messageId = (
     await makeAuthorizedRequest<{
       importDepartments: { messageId: string }
     }>(configuration, payload)
   ).data.importDepartments.messageId
+  return [messageId]
 }
 
 export const importEmployees = async (
   configuration: AavaApiIntegrationsConfiguration,
   employees: any
-): Promise<string> => {
+): Promise<string[]> => {
   const payload = {
     query: `
       mutation importEmployees(
@@ -99,18 +100,19 @@ export const importEmployees = async (
       employees
     }
   }
-  return (
+  const messageId = (
     await makeAuthorizedRequest<{ importEmployees: { messageId: string } }>(
       configuration,
       payload
     )
   ).data.importEmployees.messageId
+  return [messageId]
 }
 
 export const importAbsences = async (
   configuration: AavaApiIntegrationsConfiguration,
   absences: any
-): Promise<string> => {
+): Promise<string[]> => {
   const payload = {
     query: `
       mutation importAbsences(
@@ -130,30 +132,33 @@ export const importAbsences = async (
       absences
     }
   }
-  return (
+  const messageId = (
     await makeAuthorizedRequest<{ importAbsences: { messageId: string } }>(
       configuration,
       payload
     )
   ).data.importAbsences.messageId
+  return [messageId]
 }
 
 export const getProcessingStatusCommand = (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
-  return async (messageId: string): Promise<string> => {
+  return async (messageIds: string[]): Promise<string[]> => {
     const payload = {
       query: `
     query {
-      processingStatus(messageId: "${messageId}") {
+      processingStatus(messageIds: ["${messageIds.map(m => m)}"]) {
         importStatus
       }
     }
   `
     }
     const response = await axios.post<
-      GraphQLHTTPResponse<{ processingStatus: { importStatus: string } }>
+      GraphQLHTTPResponse<{ processingStatus: { importStatus: string }[] }>
     >(configuration.aavaApiServer, payload)
-    return response.data.data.processingStatus.importStatus
+    return response.data.data.processingStatus.map(
+      ({ importStatus }) => importStatus
+    )
   }
 }

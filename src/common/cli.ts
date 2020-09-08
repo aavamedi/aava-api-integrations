@@ -18,24 +18,24 @@ export const readData = <T>(filename: string): T => {
   ) as T
 }
 
-type StatusCommand = (messageId: string) => Promise<string | undefined>
+type StatusCommand = (messageIds: string[]) => Promise<string[]>
 
 export const waitForProcessingResult = async (
-  result: Promise<string | undefined>,
+  result: Promise<string[]>,
   statusCommand: StatusCommand
 ) => {
   try {
-    const messageId = await result
-    console.log("Message id", messageId)
-    if (!messageId) {
-      throw new Error("Query finished, but no message id")
+    const messageIds = await result
+    console.log("Message ids", messageIds)
+    if (!messageIds) {
+      throw new Error("Query finished, but no message ids")
     }
 
     let times = 20
     while (times-- > 0) {
-      const status = await statusCommand(messageId)
-      console.log(`Processing status: ${status} (${20 - times}/20)`)
-      if (status === "DONE") {
+      const statuses = await statusCommand(messageIds)
+      console.log(`Processing status: ${statuses} (${20 - times}/20)`)
+      if (!statuses.some(s => s !== "DONE")) {
         break
       }
       await promisify(setTimeout)(2000)

@@ -7,12 +7,12 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  /** Date in ISO 8601 format */
+  Date: string,
   /** Non-empty String with less than 1024 characters */
   MediumString: string,
   /** Finnish social security number */
   SSN: string,
-  /** Date in ISO 8601 format */
-  Date: string,
   /** Universally Unique Identifier */
   UUID: string,
 };
@@ -52,6 +52,13 @@ export type DepartmentInput = {
   names: NamesInput,
   /** Short name of the department */
   code?: Maybe<Scalars['MediumString']>,
+};
+
+/** Response to import mutations */
+export type DhImportPushResponse = {
+   __typename?: 'DhImportPushResponse',
+  /** The identifier of the batch of data received to be processed. The value can be used to trace the status of the processing. */
+  messageId?: Maybe<Scalars['MediumString']>,
 };
 
 export type EmployeeDepartmentInput = {
@@ -120,6 +127,8 @@ export type Mutation = {
   importEmployees: ImportPushResponse,
   /** Import absences of employees to the Aava-HR application */
   importAbsences: ImportPushResponse,
+  /** Import private persons to Aava */
+  importPrivateCustomers: Array<DhImportPushResponse>,
 };
 
 
@@ -140,6 +149,12 @@ export type MutationImportAbsencesArgs = {
   absences: Array<AbsenceInput>
 };
 
+
+export type MutationImportPrivateCustomersArgs = {
+  updateData?: Maybe<Scalars['Boolean']>,
+  PrivateCustomers: Array<PrivateCustomerInput>
+};
+
 /** Localized names */
 export type NamesInput = {
   /** The name in Finnish */
@@ -148,6 +163,31 @@ export type NamesInput = {
   sv?: Maybe<Scalars['MediumString']>,
   /** The name in English */
   en?: Maybe<Scalars['MediumString']>,
+};
+
+/** Input type for importing private persons */
+export type PrivateCustomerInput = {
+  /** Social security number */
+  ssn: Scalars['SSN'],
+  /** First name of the person, such as the given name */
+  firstName: Scalars['MediumString'],
+  /** Last name of the person, such as the family name */
+  lastName: Scalars['MediumString'],
+  /** Personal email address of the person */
+  emailAddress?: Maybe<Scalars['MediumString']>,
+  /** Phone number of the person; if the value does not start with a plus sign, it is interpreted as a Finnish phone number */
+  phoneNumber?: Maybe<Scalars['MediumString']>,
+  /** 
+ * Mobile phone number of the person; if the value does not start with a plus
+   * sign, it is interpreted as a Finnish phone number
+ */
+  mobilePhoneNumber?: Maybe<Scalars['MediumString']>,
+  /** Postal street address of the person */
+  streetAddress?: Maybe<Scalars['MediumString']>,
+  /** Postal code of the address */
+  postalCode?: Maybe<Scalars['MediumString']>,
+  /** Post office of the address */
+  postOffice?: Maybe<Scalars['MediumString']>,
 };
 
 export enum ProcessingState {
@@ -161,20 +201,20 @@ export type ProcessingStatus = {
    __typename?: 'ProcessingStatus',
   messageId: Scalars['ID'],
   importStatus: ProcessingState,
-  importType: Scalars['String'],
-  timestamp?: Maybe<Scalars['Int']>,
+  importType?: Maybe<Scalars['String']>,
+  timestamp?: Maybe<Scalars['Date']>,
 };
 
 export type Query = {
    __typename?: 'Query',
   hello: Scalars['Boolean'],
   /** Get the status of an asynchronously processed message */
-  processingStatus?: Maybe<ProcessingStatus>,
+  processingStatus?: Maybe<Array<Maybe<ProcessingStatus>>>,
 };
 
 
 export type QueryProcessingStatusArgs = {
-  messageId: Scalars['ID']
+  messageIds: Array<Scalars['ID']>
 };
 
 

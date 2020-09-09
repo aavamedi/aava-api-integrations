@@ -148,7 +148,7 @@ export const getProcessingStatusCommand = (
     const payload = {
       query: `
     query {
-      processingStatus(messageIds: ["${messageIds.map(m => m)}"]) {
+      processingStatus(messageIds: [${messageIds.map(m => `"${m}"`)}]) {
         importStatus
       }
     }

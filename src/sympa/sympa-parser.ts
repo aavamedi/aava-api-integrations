@@ -49,8 +49,7 @@ const sympaEmployeeToEmployeeInput = (employee: Employee): EmployeeInput => {
   return ({
     externalId: employee.externalId,
     identifier: employee.identifier,
-    // ssn: employee.ssn ? employee.ssn : "010101-1119", // TODO Sympa demo ssn's are invalid
-    ssn: "010101-1119",
+    ssn: employee.ssn,
     callName: employee.callName ? employee.callName : "-",
     lastName: employee.lastName,
     emailAddress: employee.emailAddress,

@@ -14,7 +14,10 @@ import {
   importAbsences,
   getProcessingStatusCommand
 } from "./http-client"
-import { parseEmployeeData } from "../../src/sympa/sympa-parser"
+import {
+  parseEmployeeData,
+  parseDepartmentData
+} from "../../src/sympa/sympa-parser"
 
 const aavaApiIntegrationsConfiguration = readConfiguration()
 
@@ -42,6 +45,18 @@ const importEmployeesCommand = async (
   const employees = readData<any>(argv.filename)
   await waitForProcessingResult(
     importEmployees(aavaApiIntegrationsConfiguration, employees),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
+  )
+}
+
+const parseAndImportDepartmentsCommand = async (
+  argv: yargs.Arguments<{
+    filename: string
+  }>
+) => {
+  const departments = parseDepartmentData(argv.filename)
+  await waitForProcessingResult(
+    importDepartments(aavaApiIntegrationsConfiguration, departments),
     getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
   )
 }
@@ -74,6 +89,7 @@ commandLineInterface(
   helloWorldCommand,
   importDepartmentsCommand,
   importEmployeesCommand,
+  parseAndImportDepartmentsCommand,
   parseAndImportEmployeesCommand,
   importAbsencesCommand
 )

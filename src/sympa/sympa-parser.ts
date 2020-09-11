@@ -1,9 +1,10 @@
 import { readData } from "../common/cli"
 import {
   DemoAava as Employee,
+  DemoAavaDepartments as Department,
   Employments__DemoAava__TYPE
 } from "../../generated/sympa-types"
-import { EmployeeInput } from "../../generated/aava-api-types"
+import { EmployeeInput, DepartmentInput } from "../../generated/aava-api-types"
 import { parsePhoneNumber } from "libphonenumber-js"
 
 // Note: The data mapping in this file is based on the demo data provided by Sympa HR.
@@ -15,6 +16,14 @@ const readEmployees = (inputFilename: string): Employee[] => {
     value: Employee[]
   }>(inputFilename)
   return employees
+}
+
+const readDepartments = (inputFilename: string): Department[] => {
+  const { value: departments } = readData<{
+    "@odata.context": string
+    value: Department[]
+  }>(inputFilename)
+  return departments
 }
 
 const sortByStartDate = <T extends { startDate?: string }>(items: T[]): T[] => {
@@ -76,6 +85,23 @@ const sympaEmployeeToEmployeeInput = (employee: Employee): EmployeeInput => {
   } as unknown) as EmployeeInput
 }
 
+const sympaDepartmentToDepartmentInput = (
+  department: Department
+): DepartmentInput => {
+  return ({
+    externalId: department.externalId,
+    names: {
+      fi: department.name
+    }
+  } as unknown) as DepartmentInput
+}
+
 export const parseEmployeeData = (inputFilename: string): EmployeeInput[] => {
   return readEmployees(inputFilename).map(sympaEmployeeToEmployeeInput)
+}
+
+export const parseDepartmentData = (
+  inputFilename: string
+): DepartmentInput[] => {
+  return readDepartments(inputFilename).map(sympaDepartmentToDepartmentInput)
 }

@@ -12,7 +12,10 @@ import {
   AbsenceInput
 } from "../../generated/aava-api-types"
 import { readConfiguration } from "../../src/common/configuration"
-import { parseEmployeeData } from "../../src/sympa/sympa-parser"
+import {
+  parseDepartmentData,
+  parseEmployeeData
+} from "../../src/sympa/sympa-parser"
 import {
   readData,
   waitForProcessingResult,
@@ -50,6 +53,18 @@ const importEmployeesCommand = async (
   )
 }
 
+const parseAndImportDepartmentsCommand = async (
+  argv: yargs.Arguments<{
+    filename: string
+  }>
+) => {
+  const departments = parseDepartmentData(argv.filename)
+  await waitForProcessingResult(
+    importDepartments(aavaApiIntegrationsConfiguration, departments),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
+  )
+}
+
 const parseAndImportEmployeesCommand = async (
   argv: yargs.Arguments<{
     filename: string
@@ -78,6 +93,7 @@ commandLineInterface(
   helloWorldCommand,
   importDepartmentsCommand,
   importEmployeesCommand,
+  parseAndImportDepartmentsCommand,
   parseAndImportEmployeesCommand,
   importAbsencesCommand
 )

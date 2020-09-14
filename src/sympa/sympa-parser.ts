@@ -49,13 +49,22 @@ const sympaEmployeeToEmployeeInput = (employee: Employee): EmployeeInput => {
     employee.localPhoneNumber &&
     parsePhoneNumber(employee.localPhoneNumber.trim(), "FI")
   const phoneCountryCode = parsedPhoneNumber
-    ? parsedPhoneNumber.countryCallingCode
+    ? parsedPhoneNumber.countryCallingCode.toString()
     : "-"
   const localPhoneNumber = parsedPhoneNumber
-    ? parsedPhoneNumber.nationalNumber
+    ? parsedPhoneNumber.nationalNumber.toString()
     : "-"
 
-  return ({
+  if (!employee.ssn) {
+    throw new Error(`Employee ${employee.externalId} has no SSN!`)
+  }
+  if (!sortedEmployments[0].startDate) {
+    throw new Error(
+      `Employee ${employee.externalId}: first employment start date is required!`
+    )
+  }
+
+  return {
     externalId: employee.externalId,
     identifier: employee.identifier,
     ssn: employee.ssn,
@@ -65,9 +74,14 @@ const sympaEmployeeToEmployeeInput = (employee: Employee): EmployeeInput => {
     privateEmailAddress: employee.privateEmailAddress,
     phoneCountryCode,
     localPhoneNumber,
-    startDate: sortedEmployments[0].startDate,
+    startDate: sortedEmployments[0].startDate.toString(),
     endDate: sortedEmployments[sortedEmployments.length - 1].endDate,
     departments: employee.Departments.filter(d => d.departmentId).map(d => {
+      if (!d.startDate || !d.departmentId) {
+        throw new Error(
+          `Employee ${employee.externalId}: department ids and startDates are required!`
+        )
+      }
       return {
         externalId: d.departmentId,
         startDate: d.startDate,
@@ -82,18 +96,18 @@ const sympaEmployeeToEmployeeInput = (employee: Employee): EmployeeInput => {
           }
         ]
       : []
-  } as unknown) as EmployeeInput
+  }
 }
 
 const sympaDepartmentToDepartmentInput = (
   department: Department
 ): DepartmentInput => {
-  return ({
+  return {
     externalId: department.externalId,
     names: {
       fi: department.name
     }
-  } as unknown) as DepartmentInput
+  }
 }
 
 export const parseEmployeeData = (inputFilename: string): EmployeeInput[] => {

@@ -143,18 +143,20 @@ export const getProcessingStatusCommand = (
 ) => {
   return async (messageIds: string[]): Promise<ProcessingState[]> => {
     const client = await getApolloClient(configuration, true)
-    const result = await client.query<{ processingStatus: ProcessingStatus[] }>({
-      query: gql`
-        query getProcessingStatus($messageIds: [ID!]!) {
-          processingStatus(messageIds: $messageIds) {
-            importStatus
+    const result = await client.query<{ processingStatus: ProcessingStatus[] }>(
+      {
+        query: gql`
+          query getProcessingStatus($messageIds: [ID!]!) {
+            processingStatus(messageIds: $messageIds) {
+              importStatus
+            }
           }
+        `,
+        variables: {
+          messageIds
         }
-      `,
-      variables: {
-        messageIds
       }
-    })
+    )
     assertNoErrors(result)
     return result.data.processingStatus.map(({ importStatus }) => importStatus)
   }

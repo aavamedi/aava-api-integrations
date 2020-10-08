@@ -1,0 +1,251 @@
+# Reference implementation for integrating personnel and hour tracking systems with Aava API
+
+This is the implementation for entering personnel data from an HR management system
+and absence data from hour tracking system and using GraphQL interface for pushing them to
+AavaHR via Aava API.
+
+There is also a test code for verifying the API without fetching actual data from anywhere.
+Conversely, to see if the data fetched from HRM system or hour tracker makes sense, you
+can run the script using the "--read_only" argument, in which case the retrieved results are
+printed out instead of sent to API.
+
+# Prerequisites
+
+Python must be installed. This code has been verified as working on Python 3.8.5. While there
+should be no problems using 3.7 or newer, no testing with any other version has been made.
+
+Some module are also required for this, install them using pip
+
+`pip install openpyxl` (only required for the test company)
+
+`pip install gql`
+
+`pip install requests`
+
+# Running the program
+
+## Before running
+
+Connection to Aava API requires certain parameters to be set in properties.json file. You
+can create it by copying the properties-template.json or by copying the following code block.
+
+```
+{
+  "aavaApiServer": "https://api.aava.fi",
+  "clientId": "",
+  "clientSecret": "",
+  "organizationId": ""
+}
+```
+
+For testing, the server address can also be https://api-test.aava.fi. Rest of the parameters
+you will receive from you Aava contact.
+
+If the file is not available upon execution, an empty one will be created but it must be
+filled before the program can work correctly.
+
+## Executing the program
+
+Import is executed from command line with the command:
+
+`python sync_data.py`
+
+Following command line options are available:
+
+`-sd / --suppress_deps` Departments are ignored: they are neither read from the source nor
+sent to the API
+
+`-se / --suppress_employees` Employee data is ignored: it is neither read from the source nor
+sent to the API
+
+`-sa / --suppress_absences` Absence data is ignored: it is neither read from the source nor
+sent to the API
+
+`--read_only` This is useful for testing the data read: the information is retrieved from the
+source, but it is not sent to the API
+
+## Examples
+
+`python sync_data.py --read_only --suppress_employees --suppress_absences`
+
+Only retrieves department information and prints it out on the screen. Printout will be something
+along the lines of:
+
+```
+[
+    {
+        "externalId": "prod",
+        "names": {
+            "en": "Production",
+            "fi": "Tuotanto"
+        }
+    },
+    {
+        "externalId": "rnd",
+        "names": {
+            "en": "Research and Development",
+            "fi": "Kehitys"
+        }
+    },
+    ...
+]
+```
+
+`python sync_data.py --read_only -sd -sa`
+
+Only retrieves and prints out the employee data without invoking the API. This kind of information may
+be shown on the console:
+
+```
+[
+    {
+        "callName": "Kari-Matti",
+        "departments": [
+            {
+                "externalId": "admin",
+                "startDate": "2013-07-31"
+            }
+        ],
+        "emailAddress": "kari-matti.hokkanen@corporate.com",
+        "externalId": "A01010",
+        "lastName": "Hokkanen",
+        "localPhoneNumber": "0115745316",
+        "ssn": "161165-951M",
+        "startDate": "2013-07-31"
+    },
+    {
+        "callName": "Taavi",
+        "departments": [
+            {
+                "externalId": "admin",
+                "startDate": "2014-09-20"
+            }
+        ],
+        "emailAddress": "taavi.eriksson@corporate.com",
+        "externalId": "A01011",
+        "lastName": "Eriksson",
+        "localPhoneNumber": "0112000585",
+        "ssn": "281278-9030",
+        "startDate": "2014-09-20",
+        "supervisors": [
+            {
+                "externalId": "A01010",
+                "startDate": "2014-09-20"
+            }
+        ]
+    },
+    {
+        "callName": "Lumia",
+        "departments": [
+            {
+                "externalId": "admin",
+                "startDate": "2019-02-18"
+            }
+        ],
+        "emailAddress": "lumia.nissil\u00e4@corporate.com",
+        "externalId": "A01012",
+        "lastName": "Nissil\u00e4",
+        "localPhoneNumber": "0115392274",
+        "ssn": "090977-954P",
+        "startDate": "2019-02-18",
+        "supervisors": [
+            {
+                "externalId": "A01010",
+                "startDate": "2019-02-18"
+            }
+        ]
+    },
+    ...
+]
+```
+
+# Technical details
+
+In order to implement a new data retriever for HRM or time tracker system, a new module should
+be written. The modules must implement certain functions as explained in following sections.
+
+If the modules return the required values in correct format, only thing that needs to be changed
+in sync_data.py file are the import lines to something like this:
+
+```
+import real_world_hrm as hrm
+import real_world_time_tracker as ttr
+```
+
+## HR management system integration module
+
+`get_departments()`
+
+Retrieves the department data from HRM or other source as an array whose items are dictionary
+objects. Each object must be of following structure:
+
+```
+{
+    "externalId": "<any string>",
+    "names": {
+        "en": "<human readable department name in English>",
+        "fi": "<human readable department name in Finnish>",
+        "sv": "<human readable department name in Swedish>"
+    }
+}
+```
+
+Not all languages are required, but of course it helps to have at least one human readable name.
+External ID should be permanent, so any changes to the department names can be handled correctly.
+
+`get_personnel()`
+
+Retrieves the personnel data from HRM. Returned value is an array with dictionary objects as
+its members. The objects must be of following structure:
+
+```
+{
+    "externalId": "<any string>",
+    "ssn": "<social security number, optional>",
+    "callName": "<First name of the employee>",
+    "lastName": "<Last name of the employee>",
+    "emailAddress": "<valid email address, optional>",
+    "localPhoneNumber": "<phone number without country code, optional>",
+    "startDate": "<start date of employment in format YYYY-MM-DD>",
+    "endDate": "<end date of employment in format YYYY-MM-DD, optional>",
+    "departments": [
+        {
+            "externalId": "<an external ID as sent in department info>",
+            "startDate": "<date of starting at the department in format YYYY-MM-DD>",
+            "endDate": "<date of leaving the department in format YYYY-MM-DD, optional>"
+        }
+    ],
+    "supervisors": [
+        {
+            "externalId": "<the external ID of the supervisor as submitted with this function>",
+            "startDate": "<date when sup-sub relationship started in format YYYY-MM-DD>",
+            "endDate": "<date when sup-sub relationship ended in format YYYY-MM-DD, optional>"
+        }
+    ]
+}
+```
+
+Any number of superior-subordinate relationships and employments at various departments may be submitted.
+Nevertheless, the "departments" and "supervisors" values must be arrays with dictionary objects.
+
+Do note that the external IDs may be provided by the external systems in which case they should be used.
+Regardless, it is essential that each external ID persistently points to the same entity, as this
+guarantees the coherency of data stored in AavaHR.
+
+## Hour tracking system integration module
+
+`get_absences()`
+
+This function returns an array with dictionary objects of following structure:
+
+```
+{
+    "externalId": "<external ID of the employee (see previous section)>",
+    "startDate": "<start date of absence in format YYYY-MM-DD>",
+    "endDate": "<end date of absence in format YYYY-MM-DD, optional>",
+    "approvalType": "<Supervisor | Doctor | Nurse, optional>"
+}
+```
+
+External ID _must_ be the same as was used when retrieving data from HRM system. Approval type is
+optional, and may not even be available from the hour tracking system, so don't sweat it.

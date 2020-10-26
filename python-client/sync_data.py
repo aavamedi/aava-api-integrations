@@ -9,8 +9,8 @@ import aavahr_graphql as api
 # Personnel and department data fetching is wrapped in one source file,
 # absences in another one. To make life simpler, when using different
 # modules, just keep referring to them as "hrm" and "ttr"
-import sample.sample_hrm as hrm
-import sample.sample_time_tracker as ttr
+import sample_hrm as hrm
+import sample_time_tracker as ttr
 
 if '--help' in argv:
     print('''

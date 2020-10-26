@@ -16,8 +16,6 @@ should be no problems using 3.7 or newer, no testing with any other version has 
 
 Some module are also required for this, install them using pip
 
-`pip install openpyxl` (only required for the test company)
-
 `pip install gql`
 
 `pip install requests`
@@ -39,7 +37,7 @@ can create it by copying the properties-template.json or by copying the followin
 ```
 
 For testing, the server address can also be https://api-test.aava.fi. Rest of the parameters
-you will receive from you Aava contact.
+you will receive from your Aava contact.
 
 If the file is not available upon execution, an empty one will be created but it must be
 filled before the program can work correctly.

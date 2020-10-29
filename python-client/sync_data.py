@@ -1,16 +1,38 @@
 import json
 import utils
+import importlib
 from time import sleep
 from sys import argv
 
 # All the API calls are wrapped in functions
 import aavahr_graphql as api
 
+# Load the connection parameters or inform user that the parameter file is not found
+props = utils.load_properties()
+if (props is None):
+    utils.initialize_properties_and_exit()
+
+try:
+    assert "aavaApiServer" in props, "aavaApiServer missing"
+    assert "clientId" in props, "clientId missing"
+    assert "clientSecret" in props, "clientSecret missing"
+    assert "organizationId" in props, "organizationId missing"
+    assert "hrm" in props, "hrm missing"
+    assert "moduleName" in props["hrm"], "hrm.moduleName missing"
+    assert "ttr" in props, "ttr missing"
+    assert "moduleName" in props["ttr"], "ttr.moduleName missing"
+except Exception as e:
+    print("Properties file not complete:", repr(e))
+    exit()
+
 # Personnel and department data fetching is wrapped in one source file,
-# absences in another one. To make life simpler, when using different
-# modules, just keep referring to them as "hrm" and "ttr"
-import sample_hrm as hrm
-import sample_time_tracker as ttr
+# absences in another one.
+try:
+    hrm = importlib.import_module(props["hrm"]["moduleName"])
+    ttr = importlib.import_module(props["ttr"]["moduleName"])
+except Exception as e:
+    print("Module loading failed:", repr(e))
+    exit()
 
 if '--help' in argv:
     print('''
@@ -25,11 +47,6 @@ if '--help' in argv:
     --read_only - Don't make API call, only print out the data that was read from source
     ''')
     exit()
-
-# Load the connection parameters or inform user that the parameter file is not found
-props = utils.load_properties()
-if (props is None):
-    utils.initialize_properties_and_exit()
 
 # Get an access token for making requests to Aava API
 resp = api.get_bearer_token(props)

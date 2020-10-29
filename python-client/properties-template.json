@@ -1,6 +1,12 @@
 {
-  "aavaApiServer": "",
-  "clientId": "",
-  "clientSecret": "",
-  "organizationId": ""
+  "aavaApiServer": "https://api-test.aava.fi",
+  "clientId": "<ask from your aava representative>",
+  "clientSecret": "<ask from your aava representative>",
+  "organizationId": "<ask from your aava representative>",
+  "hrm": {
+    "moduleName": "sample_hrm"
+  },
+  "ttr": {
+    "moduleName": "sample_time_tracker"
+  }
 }

@@ -69,7 +69,7 @@ def import_employees(parameters, employees):
         }
     '''
     client = Client(transport=RequestsHTTPTransport(
-        url=parameters['aavaApiServer'],
+        url=parameters['aavaApiServer'] + "/hr",
         headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
     )
 
@@ -99,7 +99,7 @@ def import_absences(parameters, absences):
         }
     '''
     client = Client(transport=RequestsHTTPTransport(
-        url=parameters['aavaApiServer'],
+        url=parameters['aavaApiServer'] + "/hr",
         headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
     )
 
@@ -132,7 +132,7 @@ def get_statuses(parameters, message_ids):
         }
     ''')
     client = Client(transport=RequestsHTTPTransport(
-        url=parameters['aavaApiServer'],
+        url=parameters['aavaApiServer'] + "/hr",
         headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
     )
 

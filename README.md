@@ -24,6 +24,12 @@ The HTTP client uses plain HTTP to communicate with the GraphQL API. This is use
 Please note that as GraphQL has deviated from REST, some practices, such as relying only on HTTP response codes, are not sufficient.
 The reason for including this implementation is merely to demonstrate that it _can_ be used.
 
+## Python client
+
+Python client is a standalone solution that relies on GraphQL-python (gql) library. Accessing Aava API facilities
+is ready to use as is, so only data retrieval modules need to be written and configured. An included sample module
+uses hard coded values to demonstrate how the data is structured.
+
 # Running
 
 Before running either application, copy `properties-template.json` to `properties.json` and

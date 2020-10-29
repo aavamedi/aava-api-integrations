@@ -30,14 +30,25 @@ can create it by copying the properties-template.json or by copying the followin
 ```
 {
   "aavaApiServer": "https://api.aava.fi",
-  "clientId": "",
-  "clientSecret": "",
-  "organizationId": ""
+  "clientId": "<ask from your aava representative>",
+  "clientSecret": "<ask from your aava representative>",
+  "organizationId": "<ask from your aava representative>",
+  "hrm": {
+    "moduleName": "sample_hrm"
+  },
+  "ttr": {
+    "moduleName": "sample_time_tracker"
+  }
 }
 ```
 
-For testing, the server address can also be https://api-test.aava.fi. Rest of the parameters
-you will receive from your Aava contact.
+For testing, the server address can also be https://api-test.aava.fi.
+
+Objects "hrm" and "ttr" refer to the HR management system and hour tracking system modules,
+respectively. When you create your own module for reading the data from your systems, change
+this to the name of the module you will be using.
+
+Rest of the parameters you will receive from your Aava contact.
 
 If the file is not available upon execution, an empty one will be created but it must be
 filled before the program can work correctly.
@@ -162,13 +173,8 @@ be shown on the console:
 In order to implement a new data retriever for HRM or time tracker system, a new module should
 be written. The modules must implement certain functions as explained in following sections.
 
-If the modules return the required values in correct format, only thing that needs to be changed
-in sync_data.py file are the import lines to something like this:
-
-```
-import real_world_hrm as hrm
-import real_world_time_tracker as ttr
-```
+If the modules return the required values in correct format, there is no need to touch any of the
+original code. Only the parameters in properties.json file need to be changed.
 
 ## HR management system integration module
 

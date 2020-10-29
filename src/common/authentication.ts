@@ -10,7 +10,7 @@ export const getBearerToken = async (
     `${configuration.clientId}:${configuration.clientSecret}`
   ).toString("base64")
 
-  const url = configuration.aavaApiServer + "/auth/token"
+  const url = new URL("/auth/token", configuration.aavaApiServer).href
   const options = {
     headers: {
       Accept: "application/json",

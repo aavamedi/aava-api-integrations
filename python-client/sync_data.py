@@ -28,8 +28,8 @@ except Exception as e:
 # Personnel and department data fetching is wrapped in one source file,
 # absences in another one.
 try:
-    hrm = importlib.import_module(props["hrm"]["moduleName"])
-    ttr = importlib.import_module(props["ttr"]["moduleName"])
+    hrm = importlib.import_module(props["hrMgmtSystem"]["moduleName"])
+    ttr = importlib.import_module(props["hourTrackingSystem"]["moduleName"])
 except Exception as e:
     print("Module loading failed:", repr(e))
     exit()

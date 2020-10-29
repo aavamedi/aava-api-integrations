@@ -3,10 +3,10 @@
   "clientId": "<ask from your aava representative>",
   "clientSecret": "<ask from your aava representative>",
   "organizationId": "<ask from your aava representative>",
-  "hrm": {
+  "hrMgmtSystem": {
     "moduleName": "sample_hrm"
   },
-  "ttr": {
+  "hourTrackingSystem": {
     "moduleName": "sample_time_tracker"
   }
 }

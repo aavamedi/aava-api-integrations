@@ -4,9 +4,9 @@
   "clientSecret": "<ask from your aava representative>",
   "organizationId": "<ask from your aava representative>",
   "hrMgmtSystem": {
-    "moduleName": "sample_hrm"
+    "moduleName": "examples.simple_example_hrm"
   },
   "hourTrackingSystem": {
-    "moduleName": "sample_time_tracker"
+    "moduleName": "examples.simple_example_time_tracker"
   }
 }

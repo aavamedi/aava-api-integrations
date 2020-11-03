@@ -39,7 +39,7 @@ def import_departments(parameters, departments):
         }
     '''
     client = Client(transport=RequestsHTTPTransport(
-        url=parameters['aavaApiServer'],
+        url=parameters['aavaApiServer'] + '/hr',
         headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
     )
 

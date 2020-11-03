@@ -4,8 +4,10 @@ This is the implementation for entering personnel data from an HR management sys
 and absence data from hour tracking system and using GraphQL interface for pushing them to
 AavaHR via Aava API.
 
-There is also a test code for verifying the API without fetching actual data from anywhere.
-Conversely, to see if the data fetched from HRM system or hour tracker makes sense, you
+Example modules for verifying the API without fetching actual data from anywhere are included
+and can be found in the 'examples' folder.
+
+Also, to see if the data fetched from HRM system or hour tracker by your module makes sense, you
 can run the script using the "--read_only" argument, in which case the retrieved results are
 printed out instead of sent to API.
 
@@ -33,20 +35,20 @@ can create it by copying the properties-template.json or by copying the followin
   "clientId": "<ask from your aava representative>",
   "clientSecret": "<ask from your aava representative>",
   "organizationId": "<ask from your aava representative>",
-  "hrm": {
-    "moduleName": "sample_hrm"
+  "hrMgmtSystem": {
+    "moduleName": "hrm_module"
   },
   "ttr": {
-    "moduleName": "sample_time_tracker"
+    "moduleName": "time_tracker_module"
   }
 }
 ```
 
 For testing, the server address can also be https://api-test.aava.fi.
 
-Objects "hrm" and "ttr" refer to the HR management system and hour tracking system modules,
-respectively. When you create your own module for reading the data from your systems, change
-this to the name of the module you will be using.
+Objects "hrMgmtSystem" and "hourTrackingSystem" refer to the HR management system and hour
+tracking system modules, respectively. When you create your own module for reading the data
+from your systems, change this to the name of the module you will be using.
 
 Rest of the parameters you will receive from your Aava contact.
 
@@ -175,6 +177,9 @@ be written. The modules must implement certain functions as explained in followi
 
 If the modules return the required values in correct format, there is no need to touch any of the
 original code. Only the parameters in properties.json file need to be changed.
+
+**Note!** The fields supported by Aava API may change over time. Please refer to the schema
+exposed at https://api.aava.fi/hr for up to date information.
 
 ## HR management system integration module
 

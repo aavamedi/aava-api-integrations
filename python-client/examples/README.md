@@ -42,3 +42,22 @@ properties-excel-example.json
 This example also shows, how module specific properties can be configured in the
 properties JSON file. Copy the example JSON to the parent directory with name
 properties.json to use it as the basis for your further development.
+
+## SympaHR Example
+
+This is a copy of the actual module used by Aava itself (with very minor changes).
+Since in our setup the departments can not be fetched from SympaHR with a separate
+query, both departments and employees are retrieved in one run. Also, the department
+ID is not available through the REST API, so a unique identifier is generated from
+the Finnish name of the department.
+
+Files:
+
+```
+properties-sympahr-example.json
+sympahr_example_hrm.py
+```
+
+The module specific properties are the URL of the REST API, username and password. These
+can be either requested from Sympa or they can be generated with SympaHR admin tools. The
+values in example properties file are copied from Sympa Integration Guide, and do not work.

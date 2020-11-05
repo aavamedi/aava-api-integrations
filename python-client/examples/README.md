@@ -1,7 +1,10 @@
 # Example modules
 
 To kick start your integration project, some example modules are included. You
-may freely copy and modify these modules to suit your purposes.
+may freely copy and modify these modules to suit your purposes. There are a
+couple of methods used for retrieving the data, like reading it from a locally
+stored Excel, using HTTP/REST requests and fetching a CSV file over FTP. The
+data structure is most apparent from simple example.
 
 ## Simple example
 
@@ -43,7 +46,7 @@ This example also shows, how module specific properties can be configured in the
 properties JSON file. Copy the example JSON to the parent directory with name
 properties.json to use it as the basis for your further development.
 
-## SympaHR Example
+## SympaHR example
 
 This is a copy of the actual module used by Aava itself (with very minor changes).
 Since in our setup the departments can not be fetched from SympaHR with a separate
@@ -61,3 +64,20 @@ sympahr_example_hrm.py
 The module specific properties are the URL of the REST API, username and password. These
 can be either requested from Sympa or they can be generated with SympaHR admin tools. The
 values in example properties file are copied from Sympa Integration Guide, and do not work.
+
+## Timeplan example
+
+This also is a copy of an Aava module, used for fetching absence data. The information is
+stored in a CSV file and it is retrieved using SFTP. The file name is assumed to always be
+the same to make the implementation simpler.
+
+FTP connection is handled with PySFTP module, which is installed by running the command
+
+`pip install pysftp`
+
+Files:
+
+```
+properties-timeplan-example.json
+timeplan_example_hrm.py
+```

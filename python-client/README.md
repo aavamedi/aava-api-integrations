@@ -18,9 +18,7 @@ should be no problems using 3.7 or newer, no testing with any other version has 
 
 Some module are also required for this, install them using pip
 
-`pip install gql`
-
-`pip install requests`
+`pip install -r requirements.txt`
 
 # Running the program
 

@@ -16,17 +16,18 @@ def get_departments():
 
     departments = []
     for row in wb.active.iter_rows(min_row=2):
+        external_id, fi, sv, en = row
         dep = {
-            'externalId': row[0].value,
+            'externalId': external_id.value,
             'names': {
             }
         }
         if row[1].value:
-            dep['names']['fi'] = row[1].value
+            dep['names']['fi'] = fi.value
         if row[2].value:
-            dep['names']['sv'] = row[2].value
+            dep['names']['sv'] = sv.value
         if row[3].value:
-            dep['names']['en'] = row[3].value
+            dep['names']['en'] = en.value
 
         departments.append(dep)
 

@@ -6,6 +6,12 @@ couple of methods used for retrieving the data, like reading it from a locally
 stored Excel, using HTTP/REST requests and fetching a CSV file over FTP. The
 data structure is most apparent from simple example.
 
+These modules depend on certain external libraries. They are included in the
+requirements.txt file in the directory with main code, and are installed by
+running pip command:
+
+`pip install -r requirements.txt`
+
 ## Simple example
 
 A module with hard coded value to demonstrate the data structure used for
@@ -26,10 +32,6 @@ to play around with the data and see how it is transmitted over GraphQL.
 This module is more closely resembling of a real life solution. It can even be
 used as such by simply configuring a HR management system and Hour tracking systems
 to produce Excel files with columns corresponding to the ones in the examples.
-
-To run this example, you will need to install openpyxl library:
-
-`pip install openpyxl`
 
 Files:
 
@@ -70,10 +72,6 @@ values in example properties file are copied from Sympa Integration Guide, and d
 This also is a copy of an Aava module, used for fetching absence data. The information is
 stored in a CSV file and it is retrieved using SFTP. The file name is assumed to always be
 the same to make the implementation simpler.
-
-FTP connection is handled with PySFTP module, which is installed by running the command
-
-`pip install pysftp`
 
 Files:
 

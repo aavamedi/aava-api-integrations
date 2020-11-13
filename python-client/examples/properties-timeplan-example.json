@@ -7,6 +7,12 @@
     "moduleName": "examples.simple_example_hrm"
   },
   "hourTrackingSystem": {
-    "moduleName": "examples.simple_example_time_tracker"
+    "moduleName": "examples.timeplan_example_time_tracker",
+    "host": "ftp.timeplan.com",
+    "port": 22,
+    "path": "/path/to/file.csv",
+    "id": "timeplan_user",
+    "pw": "a_password",
+    "hostKey": "astringthatcannotbemadesenseof"
   }
 }

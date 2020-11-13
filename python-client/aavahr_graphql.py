@@ -5,10 +5,19 @@ from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 
 
-def get_bearer_token(parameters):
-    # Retrieves the bearer token that will be needed for all requests to Aava API
-    # In this and the following functions the 'parameters' variable must contain
-    # a dictionary object with the parameters read from properties.json file
+def get_bearer_token(parameters: dict) -> dict:
+    """
+    Retrieves the bearer token that will be needed for all requests to Aava API
+    In this and the following functions the 'parameters' variable must contain
+    a dictionary object with the parameters read from properties.json file
+
+    Args:
+        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
+
+    Returns:
+        dict: Bearer Token for making requests; a dictionary object, the key for token is 'access_token'
+    """
+
     basic_auth = b64encode(str.encode(
         parameters['clientId'] + ':' + parameters['clientSecret']))
     hdrs = {
@@ -23,8 +32,18 @@ def get_bearer_token(parameters):
         return json.loads(resp.text)
 
 
-def import_departments(parameters, departments):
-    # Sends the department information to API
+def import_departments(parameters: dict, departments: dict) -> dict:
+    """
+    Imports the department information to Aava API.
+
+    Args:
+        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
+        departments (dict): A dictionary object containing the department data (see simple_example_hrm.py)
+
+    Returns:
+        dict: Structure containing the request ID for querying the status of request; in r['importDepartments']['messageId']
+    """
+
     mutation = '''
         mutation importDepartments(
             $organizationId: ID!
@@ -39,7 +58,7 @@ def import_departments(parameters, departments):
         }
     '''
     client = Client(transport=RequestsHTTPTransport(
-        url=parameters['aavaApiServer'],
+        url=parameters['aavaApiServer'] + '/hr',
         headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
     )
 
@@ -53,8 +72,18 @@ def import_departments(parameters, departments):
     return result
 
 
-def import_employees(parameters, employees):
-    # Sends the employee information to API
+def import_employees(parameters: dict, employees: dict) -> dict:
+    """
+    Imports the employee information retrieved from HRM to Aava API
+
+    Args:
+        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
+        employees (dict): A dictionary object containing the employee data (see simple_example_hrm.py)
+
+    Returns:
+        dict: Structure containing the request ID for querying the status of request; in r['importEmployees']['messageId']
+    """
+
     mutation = '''
         mutation importEmployees(
             $organizationId: ID!
@@ -83,8 +112,18 @@ def import_employees(parameters, employees):
     return result
 
 
-def import_absences(parameters, absences):
-    # Sends the absence data to API
+def import_absences(parameters: dict, absences) -> dict:
+    """
+    Imports the absence data retrieved from work hour tracking system to Aava API
+
+    Args:
+        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
+        absences (dict): A dictionary object containing the absence data (see simple_example_time_tracker.py)
+
+    Returns:
+        dict: Structure containing the request ID for querying the status of request; in r['importAbsences']['messageId']
+    """
+
     mutation = '''
         mutation importAbsences(
             $organizationId: ID!
@@ -113,10 +152,20 @@ def import_absences(parameters, absences):
     return result
 
 
-def get_statuses(parameters, message_ids):
-    # Used to query the status of import operations.
-    # message_ids parameter must be an array with the response IDs
-    # retrieved from previous function calls
+def get_statuses(parameters: dict, message_ids: list) -> dict:
+    """
+    Used to query the status of import operations. Returns a list of status objects, each object containing
+    the request ID ('messageId'), timestamp ('timestamp'), import type ('importType') and the current status
+    of the operation (key 'importStatus', value one of UNKNOWN, IN_PROGRESS, FAILURE, DONE)
+
+    Args:
+        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
+        message_ids (list): An array containing the message IDs received from import requests
+
+    Returns:
+        dict: A dictionary object with key 'processingStatus', under which there is an array of status objects
+    """
+
     query = gql('''
         query processingStatus(
             $messageIds: [ID!]!

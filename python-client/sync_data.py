@@ -17,10 +17,10 @@ try:
     assert "clientId" in props, "clientId missing"
     assert "clientSecret" in props, "clientSecret missing"
     assert "organizationId" in props, "organizationId missing"
-    assert "hrm" in props, "hrm missing"
-    assert "moduleName" in props["hrm"], "hrm.moduleName missing"
-    assert "ttr" in props, "ttr missing"
-    assert "moduleName" in props["ttr"], "ttr.moduleName missing"
+    assert "hrMgmtSystem" in props, "hrMgmtSystem missing"
+    assert "moduleName" in props["hrMgmtSystem"], "hrMgmtSystem.moduleName missing"
+    assert "hourTrackingSystem" in props, "hourTrackingSystem missing"
+    assert "moduleName" in props["hourTrackingSystem"], "hourTrackingSystem.moduleName missing"
 except Exception as e:
     print("Properties file not complete:", repr(e))
     exit()

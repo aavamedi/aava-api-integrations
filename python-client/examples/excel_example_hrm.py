@@ -48,25 +48,33 @@ def get_personnel():
 
     employees = []
     for row in wb.active.iter_rows(min_row=2):
+        external_id, identifier, ssn, call_name, last_name, email_address, private_email_address, \
+            job_title, local_phone_number, phone_country_code, start_date, end_date, department, department_start, \
+            supervisor, supervisor_start = row
+
         employee = {
-            'externalId': row[0].value,
-            'ssn': row[2].value,
-            'callName': row[3].value,
-            'lastName': row[4].value,
-            'emailAddress': row[5].value,
-            'localPhoneNumber': row[8].value,
-            'startDate': row[10].value.strftime('%Y-%m-%d'),
+            'externalId': external_id.value,
+            'identifier': identifier.value,
+            'ssn': ssn.value,
+            'callName': call_name.value,
+            'lastName': last_name.value,
+            'emailAddress': email_address.value,
+            'privateEmailAddress': private_email_address.value,
+            'jobTitle': job_title.value,
+            'localPhoneNumber': local_phone_number.value,
+            'phoneCountryCode': phone_country_code.value,
+            'startDate': start_date.value.strftime('%Y-%m-%d'),
             'departments': [{
-                'externalId': row[12].value,
-                'startDate': row[10].value.strftime('%Y-%m-%d'),
+                'externalId': department.value,
+                'startDate': department_start.value.strftime('%Y-%m-%d'),
             }]
         }
-        if row[11].value:
-            employee['endDate'] = row[11].value.strftime('%Y-%m-%d')
-        if row[14].value and row[15].value:
+        if end_date.value:
+            employee['endDate'] = end_date.value.strftime('%Y-%m-%d')
+        if supervisor.value and supervisor_start.value:
             employee['supervisors'] = [{
-                'externalId': row[14].value,
-                'startDate': row[15].value.strftime('%Y-%m-%d')
+                'externalId': supervisor.value,
+                'startDate': supervisor_start.value.strftime('%Y-%m-%d')
             }]
         employees.append(employee)
 

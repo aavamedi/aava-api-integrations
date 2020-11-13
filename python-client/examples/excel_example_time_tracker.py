@@ -17,14 +17,15 @@ def get_absences():
 
     absences = []
     for row in wb.active.iter_rows(min_row=2):
+        external_id, start_date, end_date, approval_type = row
         absence = {
-            'externalId': row[0].value,
-            'startDate': row[1].value.strftime('%Y-%m-%d')
+            'externalId': external_id.value,
+            'startDate': start_date.value.strftime('%Y-%m-%d')
         }
-        if row[2].value:
-            absence['endDate'] = row[2].value.strftime('%Y-%m-%d')
-        if row[3].value:
-            absence['approvalType'] = row[3].value
+        if end_date.value:
+            absence['endDate'] = end_date.value.strftime('%Y-%m-%d')
+        if approval_type.value:
+            absence['approvalType'] = approval_type.value
         absences.append(absence)
 
     return absences

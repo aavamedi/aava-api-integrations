@@ -50,10 +50,11 @@ def get_absences():
     csvfile = open(tempfile, 'r')
     reader = csv.reader(csvfile, delimiter=';')
     for row in reader:
+        external_id, start_date, end_date = row
         absence = {
-            'externalId': row[0],
-            'startDate': parse_date(row[2]),
-            'endDate': parse_date(row[3])
+            'externalId': external_id,
+            'startDate': parse_date(start_date),
+            'endDate': parse_date(end_date)
         }
         absences.append(absence)
 

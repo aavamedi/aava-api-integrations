@@ -167,16 +167,19 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
     """
 
     query = gql('''
-        query processingStatus(
+        query processingStatusWithVerify(
             $messageIds: [ID!]!
+            $organizationExternalId: ID!
         ) {
-            processingStatus(
-                messageIds: $messageIds
+            processingStatusWithVerify(
+                messageIds: $messageIds,
+                organizationExternalId: $organizationExternalId
             ) {
                 messageId,
                 importType,
                 importStatus,
-                timestamp
+                timestamp,
+                error
             }
         }
     ''')
@@ -187,6 +190,7 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
 
     variables = {
         "messageIds": message_ids,
+        "organizationExternalId": parameters['organizationId']
     }
 
     result = client.execute(query, variable_values=json.dumps(variables))

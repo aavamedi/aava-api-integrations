@@ -94,7 +94,7 @@ while True:
     ready = True
     results = api.get_statuses(props, message_ids)
 
-    for r in results['processingStatus']:
+    for r in results['processingStatusWithVerify']:
         if r['importStatus'] == 'UNKNOWN' or r['importStatus'] == 'IN_PROGRESS':
             ready = False
 
@@ -105,7 +105,9 @@ while True:
     sleep(1)
 
 
-for r in results['processingStatus']:
+for r in results['processingStatusWithVerify']:
     print("\nFor " + str(r['importType']) + " at " + str(r['timestamp']))
     print("Message ID: " + r['messageId'])
     print("Status    : " + r['importStatus'])
+    if r['importStatus'] == 'FAILURE':
+        print("Error     : " + r['error'])

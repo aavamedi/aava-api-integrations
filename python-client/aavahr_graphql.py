@@ -72,6 +72,46 @@ def import_departments(parameters: dict, departments: dict) -> dict:
     return result
 
 
+def import_cost_centers(parameters: dict, costCenters: dict) -> dict:
+    """
+    Imports the cost center information to Aava API.
+
+    Args:
+        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
+        costCenters (dict): A dictionary object containing the cost center data (similar to department data)
+
+    Returns:
+        dict: Structure containing the request ID for querying the status of request; in r['importCostCenters']['messageId']
+    """
+
+    mutation = '''
+        mutation importCostCenters(
+            $organizationId: ID!
+            $costCenters: [CostCenterInput!]!
+        ) {
+            importCostCenters(
+            organizationExternalId: $organizationId
+            costCenters: $costCenters
+            ) {
+            messageId
+            }
+        }
+    '''
+    client = Client(transport=RequestsHTTPTransport(
+        url=parameters['aavaApiServer'] + '/hr',
+        headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
+    )
+
+    query = gql(mutation)
+    variables = {
+        "organizationId": parameters['organizationId'],
+        "costCenters": costCenters,
+    }
+
+    result = client.execute(query, variable_values=json.dumps(variables))
+    return result
+
+
 def import_employees(parameters: dict, employees: dict) -> dict:
     """
     Imports the employee information retrieved from HRM to Aava API

@@ -8,15 +8,15 @@ import {
   EmployeeInput,
   AbsenceInput,
   ProcessingStatus,
-  ProcessingState
+  ProcessingState,
+  CostCenterInput
 } from "../../generated/aava-api-types"
 import { stdout } from "process"
 
 const getApolloClient = async (
-  configuration: AavaApiIntegrationsConfiguration,
-  noAuthorization?: boolean
+  configuration: AavaApiIntegrationsConfiguration
 ) => {
-  const bearerToken = !noAuthorization && (await getBearerToken(configuration))
+  const bearerToken = await getBearerToken(configuration)
 
   return new ApolloClient({
     fetch,
@@ -138,21 +138,57 @@ export const importAbsences = async (
   return result.data ? [result.data.importAbsences.messageId] : []
 }
 
+export const importCostCenters = async (
+  configuration: AavaApiIntegrationsConfiguration,
+  costCenters: CostCenterInput[]
+): Promise<string[]> => {
+  const client = await getApolloClient(configuration)
+  stdout.write("Sending mutation importCostCenters... ")
+  const result = await client.mutate<{
+    importCostCenters: { messageId: string }
+  }>({
+    mutation: gql`
+      mutation importCostCenters(
+        $organizationId: ID!
+        $costCenters: [CostCenterInput!]!
+      ) {
+        importCostCenters(
+          organizationExternalId: $organizationId
+          costCenters: $costCenters
+        ) {
+          messageId
+        }
+      }
+    `,
+    variables: {
+      organizationId: configuration.organizationId,
+      costCenters
+    }
+  })
+  assertNoErrors(result)
+  stdout.write("done\n")
+  return result.data ? [result.data.importCostCenters.messageId] : []
+}
+
 export const getProcessingStatusCommand = (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
   return async (messageIds: string[]): Promise<ProcessingState[]> => {
-    const client = await getApolloClient(configuration, true)
+    const client = await getApolloClient(configuration)
     const result = await client.query<{ processingStatus: ProcessingStatus[] }>(
       {
         query: gql`
-          query getProcessingStatus($messageIds: [ID!]!) {
-            processingStatus(messageIds: $messageIds) {
+          query getProcessingStatus($organizationId: ID!, $messageIds: [ID!]!) {
+            processingStatusWithVerify(
+              organizationExternalId: $organizationId
+              messageIds: $messageIds
+            ) {
               importStatus
             }
           }
         `,
         variables: {
+          organizationId: configuration.organizationId,
           messageIds
         }
       }

@@ -68,7 +68,8 @@ export const commandLineInterface = (
   importEmployeesCommand: ImportCommand,
   parseAndImportDepartmentsCommand: ImportCommand,
   parseAndImportEmployeesCommand: ImportCommand,
-  importAbsencesCommand: ImportCommand
+  importAbsencesCommand: ImportCommand,
+  importCostCentersCommand: ImportCommand
 ) => {
   return yargs
     .scriptName("yarn cli")
@@ -130,6 +131,18 @@ export const commandLineInterface = (
           demandOption: true
         }),
       importAbsencesCommand
+    )
+
+    .command(
+      "cost-centers <filename>",
+      "Send cost centers to Aava-API",
+      y =>
+        y.positional("filename", {
+          description: "Path of a json file containing cost centers to upload",
+          type: "string",
+          demandOption: true
+        }),
+      importCostCentersCommand
     )
     .strict()
     .demandCommand(1, "Please specify a command").argv

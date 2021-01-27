@@ -3,13 +3,15 @@ import {
   importDepartments,
   importEmployees,
   importAbsences,
-  getProcessingStatusCommand
+  getProcessingStatusCommand,
+  importCostCenters
 } from "./graphql-client"
 import yargs from "yargs"
 import {
   DepartmentInput,
   EmployeeInput,
-  AbsenceInput
+  AbsenceInput,
+  CostCenterInput
 } from "../../generated/aava-api-types"
 import { readConfiguration } from "../../src/common/configuration"
 import {
@@ -89,11 +91,24 @@ const importAbsencesCommand = async (
   )
 }
 
+const importCostCentersCommand = async (
+  argv: yargs.Arguments<{
+    filename: string
+  }>
+) => {
+  const costCenters = readData<CostCenterInput[]>(argv.filename)
+  await waitForProcessingResult(
+    importCostCenters(aavaApiIntegrationsConfiguration, costCenters),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
+  )
+}
+
 commandLineInterface(
   helloWorldCommand,
   importDepartmentsCommand,
   importEmployeesCommand,
   parseAndImportDepartmentsCommand,
   parseAndImportEmployeesCommand,
-  importAbsencesCommand
+  importAbsencesCommand,
+  importCostCentersCommand
 )

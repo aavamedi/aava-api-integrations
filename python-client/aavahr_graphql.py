@@ -203,7 +203,7 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
         message_ids (list): An array containing the message IDs received from import requests
 
     Returns:
-        dict: A dictionary object with key 'processingStatus', under which there is an array of status objects
+        dict: A dictionary object with key 'processingStatusWithVerify', under which there is an array of status objects
     """
 
     query = gql('''

@@ -20,6 +20,10 @@ def get_departments():
     return departments
 
 
+def get_cost_centers():
+    return []
+
+
 def get_personnel():
     employees = [
         {

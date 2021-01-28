@@ -46,11 +46,11 @@ def import_departments(parameters: dict, departments: dict) -> dict:
 
     mutation = '''
         mutation importDepartments(
-            $organizationId: ID!
+            $organizationExternalId: ID!
             $departments: [DepartmentInput!]!
         ) {
             importDepartments(
-            organizationExternalId: $organizationId
+            organizationExternalId: $organizationExternalId
             departments: $departments
             ) {
             messageId
@@ -64,7 +64,7 @@ def import_departments(parameters: dict, departments: dict) -> dict:
 
     query = gql(mutation)
     variables = {
-        "organizationId": parameters['organizationId'],
+        "organizationExternalId": parameters['organizationId'],
         "departments": departments,
     }
 
@@ -86,11 +86,11 @@ def import_cost_centers(parameters: dict, costCenters: dict) -> dict:
 
     mutation = '''
         mutation importCostCenters(
-            $organizationId: ID!
+            $organizationExternalId: ID!
             $costCenters: [CostCenterInput!]!
         ) {
             importCostCenters(
-            organizationExternalId: $organizationId
+            organizationExternalId: $organizationExternalId
             costCenters: $costCenters
             ) {
             messageId
@@ -104,7 +104,7 @@ def import_cost_centers(parameters: dict, costCenters: dict) -> dict:
 
     query = gql(mutation)
     variables = {
-        "organizationId": parameters['organizationId'],
+        "organizationExternalId": parameters['organizationId'],
         "costCenters": costCenters,
     }
 
@@ -126,11 +126,11 @@ def import_employees(parameters: dict, employees: dict) -> dict:
 
     mutation = '''
         mutation importEmployees(
-            $organizationId: ID!
+            $organizationExternalId: ID!
             $employees: [EmployeeInput!]!
         ) {
             importEmployees(
-                organizationExternalId: $organizationId
+                organizationExternalId: $organizationExternalId
                 employees: $employees
             ) {
             messageId
@@ -144,7 +144,7 @@ def import_employees(parameters: dict, employees: dict) -> dict:
 
     query = gql(mutation)
     variables = {
-        "organizationId": parameters['organizationId'],
+        "organizationExternalId": parameters['organizationId'],
         "employees": employees,
     }
 
@@ -166,11 +166,11 @@ def import_absences(parameters: dict, absences) -> dict:
 
     mutation = '''
         mutation importAbsences(
-            $organizationId: ID!
+            $organizationExternalId: ID!
             $absences: [AbsenceInput!]!
         ) {
             importAbsences(
-                organizationExternalId: $organizationId
+                organizationExternalId: $organizationExternalId
                 absences: $absences
             ) {
                 messageId
@@ -184,7 +184,7 @@ def import_absences(parameters: dict, absences) -> dict:
 
     query = gql(mutation)
     variables = {
-        "organizationId": parameters['organizationId'],
+        "organizationExternalId": parameters['organizationId'],
         "absences": absences,
     }
 

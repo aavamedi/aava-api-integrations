@@ -85,15 +85,15 @@ def load_sympa():
         # Add information of past and current departments
         for d in e["Työsuhdetiedot"]:
             try:
-                assert d["Kustannuspaikka"] != None
+                assert d["Osasto"] != None
             except Exception as ex:
                 errors.append(repr(ex))
                 continue
 
-            d_id = get_depId(d["Kustannuspaikka"])
+            d_id = get_depId(d["Osasto"])
 
             # make sure the department info is in the deps array
-            deps[d_id] = d["Kustannuspaikka"]
+            deps[d_id] = d["Osasto"]
 
             d_info = {
                 'externalId': d_id,
@@ -120,6 +120,11 @@ def get_departments():
             'names': {'fi': deps[key]}
         })
     return departments
+
+
+def get_cost_centers():
+    # intentionally returns nothing
+    return []
 
 
 def get_personnel():

@@ -229,9 +229,9 @@ objects. Each object must be of following structure:
 {
     "externalId": "<any string>",
     "names": {
-        "en": "<human readable department name in English>",
-        "fi": "<human readable department name in Finnish>",
-        "sv": "<human readable department name in Swedish>"
+        "en": "<human readable cost center name in English>",
+        "fi": "<human readable cost center name in Finnish>",
+        "sv": "<human readable cost center name in Swedish>"
     }
 }
 ```

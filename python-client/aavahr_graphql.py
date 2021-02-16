@@ -196,7 +196,9 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
     """
     Used to query the status of import operations. Returns a list of status objects, each object containing
     the request ID ('messageId'), timestamp ('timestamp'), import type ('importType') and the current status
-    of the operation (key 'importStatus', value one of UNKNOWN, IN_PROGRESS, FAILURE, DONE)
+    of the operation (key 'importStatus', value one of UNKNOWN, IN_PROGRESS, FAILURE, DONE). If there is an
+    error, the 'error' parameter contains a string telling about it. Also, if the operation was succesful
+    with some minor hitches, the 'warnings' value gives more information about the problematic inputs.
 
     Args:
         parameters (dict): Parameters for connecting to Aava API (see properties-template.json)

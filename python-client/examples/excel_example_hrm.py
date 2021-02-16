@@ -34,6 +34,12 @@ def get_departments():
     return departments
 
 
+def get_get_cost_centers():
+    # this function intentionally returns nothing, structurally it
+    # can resemble 'get_departments'
+    return []
+
+
 def get_personnel():
     # Load properties and check that they are structurally OK
     props = utils.load_properties()

@@ -34,6 +34,20 @@ except Exception as e:
     print("Module loading failed:", repr(e))
     exit()
 
+acceptable_args = [
+    '--help',
+    '-sd', '--suppress_deps',
+    '-se', '--suppress_employees',
+    '-sa', '--suppress_absences',
+    '-sc', '--suppress_ccs',
+    '--read_only'
+]
+
+for a in argv[1:]:
+    if a not in acceptable_args:
+        print('Argument ' + a + ' not recognized, exiting!')
+        exit()
+
 if '--help' in argv:
     print('''
     How to use:
@@ -44,6 +58,7 @@ if '--help' in argv:
     -sd / --suppress_deps - Don't read or write department information
     -se / --suppress_employees - Don't read or write employee information
     -sa / --suppress_absences - Don't read or write absence information
+    -sc / --suppress_ccs - Don't read or write cost center information
     --read_only - Don't make API call, only print out the data that was read from source
     ''')
     exit()
@@ -66,6 +81,16 @@ if '-sd' not in argv and '--suppress_deps' not in argv:
         print("Importing " + str(len(deps)) + " departments...")
         res_deps = api.import_departments(props, deps)
         message_ids.append(res_deps['importDepartments']['messageId'])
+
+if '-sc' not in argv and '--suppress_ccs' not in argv:
+    # Load cost center data from HRM adjacent system and push it to Aava-API
+    ccs = hrm.get_cost_centers()
+    if '--read_only' in argv:
+        print(json.dumps(ccs, indent=4, sort_keys=True))
+    else:
+        print("Importing " + str(len(ccs)) + " cost centers...")
+        res_ccs = api.import_cost_centers(props, ccs)
+        message_ids.append(res_ccs['importCostCenters']['messageId'])
 
 if '-se' not in argv and '--suppress_employees' not in argv:
     # Load employee data from HRM and push it to Aava-API
@@ -94,7 +119,7 @@ while True:
     ready = True
     results = api.get_statuses(props, message_ids)
 
-    for r in results['processingStatus']:
+    for r in results['processingStatusWithVerify']:
         if r['importStatus'] == 'UNKNOWN' or r['importStatus'] == 'IN_PROGRESS':
             ready = False
 
@@ -105,7 +130,9 @@ while True:
     sleep(1)
 
 
-for r in results['processingStatus']:
+for r in results['processingStatusWithVerify']:
     print("\nFor " + str(r['importType']) + " at " + str(r['timestamp']))
     print("Message ID: " + r['messageId'])
     print("Status    : " + r['importStatus'])
+    if r['importStatus'] == 'FAILURE':
+        print("Error     : " + r['error'])

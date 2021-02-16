@@ -64,6 +64,9 @@ Following command line options are available:
 `-sd / --suppress_deps` Departments are ignored: they are neither read from the source nor
 sent to the API
 
+`-sc / --suppress_ccs` Cost centers are ignored: they are neither read from the source nor
+sent to the API
+
 `-se / --suppress_employees` Employee data is ignored: it is neither read from the source nor
 sent to the API
 
@@ -77,8 +80,8 @@ source, but it is not sent to the API
 
 `python sync_data.py --read_only --suppress_employees --suppress_absences`
 
-Only retrieves department information and prints it out on the screen. Printout will be something
-along the lines of:
+Only retrieves department and cost center information and prints it out on the screen. Printout
+will be something along the lines of:
 
 ```
 [
@@ -98,9 +101,26 @@ along the lines of:
     },
     ...
 ]
+[
+    {
+        "externalId": "cc1234",
+        "names": {
+            "en": "General Administration",
+            "fi": "Yleishallinto"
+        }
+    },
+    {
+        "externalId": "cc2345",
+        "names": {
+            "en": "Salaried employees",
+            "fi": "Tuntipalkkaiset työntekijät"
+        }
+    },
+    ...
+]
 ```
 
-`python sync_data.py --read_only -sd -sa`
+`python sync_data.py --read_only -sd -sc -sa`
 
 Only retrieves and prints out the employee data without invoking the API. This kind of information may
 be shown on the console:
@@ -199,6 +219,25 @@ objects. Each object must be of following structure:
 
 Not all languages are required, but of course it helps to have at least one human readable name.
 External ID should be permanent, so any changes to the department names can be handled correctly.
+
+`get_cost_centers()`
+
+Retrieves the cost center data from HRM or other source as an array whose items are dictionary
+objects. Each object must be of following structure:
+
+```
+{
+    "externalId": "<any string>",
+    "names": {
+        "en": "<human readable cost center name in English>",
+        "fi": "<human readable cost center name in Finnish>",
+        "sv": "<human readable cost center name in Swedish>"
+    }
+}
+```
+
+Not all languages are required, but of course it helps to have at least one human readable name.
+External ID should be permanent, so any changes to the cost center names can be handled correctly.
 
 `get_personnel()`
 

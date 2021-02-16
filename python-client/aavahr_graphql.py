@@ -219,7 +219,8 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
                 importType,
                 importStatus,
                 timestamp,
-                error
+                error,
+                warnings { warning, externalId }
             }
         }
     ''')

@@ -8,7 +8,6 @@ import {
   EmployeeInput,
   AbsenceInput,
   ProcessingStatus,
-  ProcessingState,
   CostCenterInput
 } from "../../generated/aava-api-types"
 import { stdout } from "process"
@@ -173,9 +172,9 @@ export const importCostCenters = async (
 export const getProcessingStatusCommand = (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
-  return async (messageIds: string[]): Promise<ProcessingState[]> => {
+  return async (messageIds: string[]): Promise<ProcessingStatus[]> => {
     const client = await getApolloClient(configuration)
-    const result = await client.query<{ processingStatus: ProcessingStatus[] }>(
+    const result = await client.query<{ processingStatusWithVerify: ProcessingStatus[] }>(
       {
         query: gql`
           query getProcessingStatus($organizationId: ID!, $messageIds: [ID!]!) {
@@ -183,7 +182,9 @@ export const getProcessingStatusCommand = (
               organizationExternalId: $organizationId
               messageIds: $messageIds
             ) {
-              importStatus
+              importStatus,
+              error,
+              warnings { warning, externalId }
             }
           }
         `,
@@ -194,7 +195,7 @@ export const getProcessingStatusCommand = (
       }
     )
     assertNoErrors(result)
-    return result.data.processingStatus.map(({ importStatus }) => importStatus)
+    return result.data.processingStatusWithVerify
   }
 }
 

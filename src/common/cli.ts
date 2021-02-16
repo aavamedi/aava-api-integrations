@@ -2,6 +2,7 @@
 import fs from "fs"
 import yargs from "yargs"
 import { promisify } from "util"
+import { ProcessingStatus } from "../../generated/aava-api-types"
 
 export const readData = <T>(filename: string): T => {
   if (!fs.existsSync(filename)) {
@@ -18,7 +19,7 @@ export const readData = <T>(filename: string): T => {
   ) as T
 }
 
-type StatusCommand = (messageIds: string[]) => Promise<string[]>
+type StatusCommand = (messageIds: string[]) => Promise<ProcessingStatus[]>
 
 export const waitForProcessingResult = async (
   result: Promise<string[]>,
@@ -34,8 +35,17 @@ export const waitForProcessingResult = async (
     let times = 20
     while (times-- > 0) {
       const statuses = await statusCommand(messageIds)
-      console.log(`Processing status: ${statuses} (${20 - times}/20)`)
-      if (!statuses.some(s => s !== "DONE")) {
+      const states = statuses.map(s => s.importStatus)
+      console.log(`Processing status: ${states.join(',')} (${20 - times}/20)`)
+      if (!statuses.some(s => s.importStatus !== "DONE" && s.importStatus !== "FAILURE")) {
+        statuses.forEach(s => {
+          if (s.error !== null) console.log("\nError in request " + s.messageId + ": " + s.error)
+          if (Array.isArray(s.warnings)) {
+            console.log("\nThere were warnings:")
+            s.warnings.forEach(w => console.log(w.warning + " " + w.externalId))
+            console.log("\n")
+          }
+        })
         break
       }
       await promisify(setTimeout)(2000)

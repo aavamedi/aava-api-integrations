@@ -31,9 +31,11 @@
     "lastName": "Ankkala",
     "emailAddress": "joonas.ankkala@jotain.fi",
     "privateEmailAddress": "joonas.ankkala@geemeili.com",
+    "jobTitle": "Duunari",
     "localPhoneNumber": "090333444",
     "phoneCountryCode": "+358",
     "startDate": "2005-03-01",
+    "periodicHealthExaminationClinic": "KA",
     "departments": [
       {
         "externalId": "a1",
@@ -48,6 +50,12 @@
     "supervisors": [
       {
         "externalId": "emp-1",
+        "startDate": "2005-03-01"
+      }
+    ],
+    "costCenters": [
+      {
+        "externalId": "cc-1",
         "startDate": "2005-03-01"
       }
     ]

@@ -12,7 +12,8 @@ import {
   importDepartments,
   importEmployees,
   importAbsences,
-  getProcessingStatusCommand
+  getProcessingStatusCommand,
+  importCostCenters
 } from "./http-client"
 import {
   parseEmployeeData,
@@ -85,11 +86,24 @@ const importAbsencesCommand = async (
   )
 }
 
+const importCostCentersCommand = async (
+  argv: yargs.Arguments<{
+    filename: string
+  }>
+) => {
+  const costCenters = readData<any>(argv.filename)
+  await waitForProcessingResult(
+    importCostCenters(aavaApiIntegrationsConfiguration, costCenters),
+    getProcessingStatusCommand(aavaApiIntegrationsConfiguration)
+  )
+}
+
 commandLineInterface(
   helloWorldCommand,
   importDepartmentsCommand,
   importEmployeesCommand,
   parseAndImportDepartmentsCommand,
   parseAndImportEmployeesCommand,
-  importAbsencesCommand
+  importAbsencesCommand,
+  importCostCentersCommand
 )

@@ -30,7 +30,9 @@ const makeAuthorizedRequest = async <T>(
 
 const assertNoErrors = (result: GraphQLHTTPResponse<any>) => {
   if (result.errors) {
-    throw new Error("GraphQL query resulted in error(s)" + result.errors)
+    throw new Error(
+      "GraphQL query resulted in error(s): " + JSON.stringify(result.errors)
+    )
   }
 }
 
@@ -141,6 +143,38 @@ export const importAbsences = async (
   return [messageId]
 }
 
+export const importCostCenters = async (
+  configuration: AavaApiIntegrationsConfiguration,
+  costCenters: any
+): Promise<string[]> => {
+  const payload = {
+    query: `
+      mutation importCostCenters(
+        $organizationId: ID!
+        $costCenters: [CostCenterInput!]!
+      ) {
+        importCostCenters(
+          organizationExternalId: $organizationId
+          costCenters: $costCenters
+        ) {
+          messageId
+        }
+      }
+    `,
+    variables: {
+      organizationId: configuration.organizationId,
+      costCenters
+    }
+  }
+  const messageId = (
+    await makeAuthorizedRequest<{ importCostCenters: { messageId: string } }>(
+      configuration,
+      payload
+    )
+  ).data.importCostCenters.messageId
+  return [messageId]
+}
+
 export const getProcessingStatusCommand = (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
@@ -148,16 +182,19 @@ export const getProcessingStatusCommand = (
     const payload = {
       query: `
     query {
-      processingStatus(messageIds: [${messageIds.map(m => `"${m}"`)}]) {
+      processingStatusWithVerify(
+        organizationExternalId: "${configuration.organizationId}"
+        messageIds: [${messageIds.map(m => `"${m}"`).join(",")}]
+      ) {
         importStatus
       }
     }
   `
     }
-    const response = await axios.post<
-      GraphQLHTTPResponse<{ processingStatus: { importStatus: string }[] }>
-    >(configuration.aavaApiServer, payload)
-    return response.data.data.processingStatus.map(
+    const response = await makeAuthorizedRequest<{
+      processingStatus: { importStatus: string }[]
+    }>(configuration, payload)
+    return response.data.processingStatus.map(
       ({ importStatus }) => importStatus
     )
   }

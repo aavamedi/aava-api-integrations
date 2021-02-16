@@ -46,11 +46,11 @@ def import_departments(parameters: dict, departments: dict) -> dict:
 
     mutation = '''
         mutation importDepartments(
-            $organizationId: ID!
+            $organizationExternalId: ID!
             $departments: [DepartmentInput!]!
         ) {
             importDepartments(
-            organizationExternalId: $organizationId
+            organizationExternalId: $organizationExternalId
             departments: $departments
             ) {
             messageId
@@ -64,8 +64,48 @@ def import_departments(parameters: dict, departments: dict) -> dict:
 
     query = gql(mutation)
     variables = {
-        "organizationId": parameters['organizationId'],
+        "organizationExternalId": parameters['organizationId'],
         "departments": departments,
+    }
+
+    result = client.execute(query, variable_values=json.dumps(variables))
+    return result
+
+
+def import_cost_centers(parameters: dict, costCenters: dict) -> dict:
+    """
+    Imports the cost center information to Aava API.
+
+    Args:
+        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
+        costCenters (dict): A dictionary object containing the cost center data (similar to department data)
+
+    Returns:
+        dict: Structure containing the request ID for querying the status of request; in r['importCostCenters']['messageId']
+    """
+
+    mutation = '''
+        mutation importCostCenters(
+            $organizationExternalId: ID!
+            $costCenters: [CostCenterInput!]!
+        ) {
+            importCostCenters(
+            organizationExternalId: $organizationExternalId
+            costCenters: $costCenters
+            ) {
+            messageId
+            }
+        }
+    '''
+    client = Client(transport=RequestsHTTPTransport(
+        url=parameters['aavaApiServer'] + '/hr',
+        headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
+    )
+
+    query = gql(mutation)
+    variables = {
+        "organizationExternalId": parameters['organizationId'],
+        "costCenters": costCenters,
     }
 
     result = client.execute(query, variable_values=json.dumps(variables))
@@ -86,11 +126,11 @@ def import_employees(parameters: dict, employees: dict) -> dict:
 
     mutation = '''
         mutation importEmployees(
-            $organizationId: ID!
+            $organizationExternalId: ID!
             $employees: [EmployeeInput!]!
         ) {
             importEmployees(
-                organizationExternalId: $organizationId
+                organizationExternalId: $organizationExternalId
                 employees: $employees
             ) {
             messageId
@@ -104,7 +144,7 @@ def import_employees(parameters: dict, employees: dict) -> dict:
 
     query = gql(mutation)
     variables = {
-        "organizationId": parameters['organizationId'],
+        "organizationExternalId": parameters['organizationId'],
         "employees": employees,
     }
 
@@ -126,11 +166,11 @@ def import_absences(parameters: dict, absences) -> dict:
 
     mutation = '''
         mutation importAbsences(
-            $organizationId: ID!
+            $organizationExternalId: ID!
             $absences: [AbsenceInput!]!
         ) {
             importAbsences(
-                organizationExternalId: $organizationId
+                organizationExternalId: $organizationExternalId
                 absences: $absences
             ) {
                 messageId
@@ -144,7 +184,7 @@ def import_absences(parameters: dict, absences) -> dict:
 
     query = gql(mutation)
     variables = {
-        "organizationId": parameters['organizationId'],
+        "organizationExternalId": parameters['organizationId'],
         "absences": absences,
     }
 
@@ -163,20 +203,23 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
         message_ids (list): An array containing the message IDs received from import requests
 
     Returns:
-        dict: A dictionary object with key 'processingStatus', under which there is an array of status objects
+        dict: A dictionary object with key 'processingStatusWithVerify', under which there is an array of status objects
     """
 
     query = gql('''
-        query processingStatus(
+        query processingStatusWithVerify(
             $messageIds: [ID!]!
+            $organizationExternalId: ID!
         ) {
-            processingStatus(
-                messageIds: $messageIds
+            processingStatusWithVerify(
+                messageIds: $messageIds,
+                organizationExternalId: $organizationExternalId
             ) {
                 messageId,
                 importType,
                 importStatus,
-                timestamp
+                timestamp,
+                error
             }
         }
     ''')
@@ -187,6 +230,7 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
 
     variables = {
         "messageIds": message_ids,
+        "organizationExternalId": parameters['organizationId']
     }
 
     result = client.execute(query, variable_values=json.dumps(variables))

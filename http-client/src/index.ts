@@ -4,7 +4,7 @@ import { readConfiguration } from "../../src/common/configuration"
 import {
   readData,
   commandLineInterface,
-  waitForProcessingResult
+  waitForProcessingResult,
 } from "../../src/common/cli"
 import yargs from "yargs"
 import {
@@ -13,11 +13,11 @@ import {
   importEmployees,
   importAbsences,
   getProcessingStatusCommand,
-  importCostCenters
+  importCostCenters,
 } from "./http-client"
 import {
   parseEmployeeData,
-  parseDepartmentData
+  parseDepartmentData,
 } from "../../src/sympa/sympa-parser"
 
 const aavaApiIntegrationsConfiguration = readConfiguration()

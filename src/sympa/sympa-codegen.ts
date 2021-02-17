@@ -88,7 +88,7 @@ const generateTypes = (entityTypeElement: Element): string => {
     `export type ${entityName} = {\n` +
     `${[
       ...constructSimpleProperties(entityTypeElement),
-      ...constructNavigationProperties(entityTypeElement)
+      ...constructNavigationProperties(entityTypeElement),
     ].join(",\n")}` +
     "\n}"
   )
@@ -101,7 +101,7 @@ const generateTypesFromODataMetadata = (
   console.log("Reading Sympa HR metadata from " + metadataFilename)
   const metadata = fs
     .readFileSync(metadataFilename, {
-      encoding: "utf-8"
+      encoding: "utf-8",
     })
     .toString()
 

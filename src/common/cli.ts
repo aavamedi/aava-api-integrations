@@ -2,7 +2,10 @@
 import fs from "fs"
 import yargs from "yargs"
 import { promisify } from "util"
-import { ProcessingState, ProcessingStatus } from "../../generated/aava-api-types"
+import {
+  ProcessingState,
+  ProcessingStatus,
+} from "../../generated/aava-api-types"
 
 export const readData = <T>(filename: string): T => {
   if (!fs.existsSync(filename)) {
@@ -13,7 +16,7 @@ export const readData = <T>(filename: string): T => {
   return JSON.parse(
     fs
       .readFileSync(filename, {
-        encoding: "utf-8"
+        encoding: "utf-8",
       })
       .toString()
   ) as T
@@ -21,10 +24,11 @@ export const readData = <T>(filename: string): T => {
 
 type StatusCommand = (messageIds: string[]) => Promise<ProcessingStatus[]>
 
-const allImportsAreFinished = (statuses: ProcessingStatus[]) : Boolean =>
+const allImportsAreFinished = (statuses: ProcessingStatus[]): Boolean =>
   !statuses.some(
-    s => s.importStatus !== ProcessingState.Done &&
-    s.importStatus !== ProcessingState.Failure
+    s =>
+      s.importStatus !== ProcessingState.Done &&
+      s.importStatus !== ProcessingState.Failure
   )
 
 export const waitForProcessingResult = async (
@@ -42,7 +46,7 @@ export const waitForProcessingResult = async (
     while (times-- > 0) {
       const statuses = await statusCommand(messageIds)
       const states = statuses.map(s => s.importStatus)
-      console.log(`Processing status: ${states.join(',')} (${20 - times}/20)`)
+      console.log(`Processing status: ${states.join(",")} (${20 - times}/20)`)
       if (allImportsAreFinished(statuses)) {
         statuses.forEach(s => {
           if (s.error !== null) {
@@ -50,7 +54,9 @@ export const waitForProcessingResult = async (
           }
 
           if (Array.isArray(s.warnings)) {
-            const warning_texts = s.warnings.map(w => w.warning + " " + w.externalId)
+            const warning_texts = s.warnings.map(
+              w => w.warning + " " + w.externalId
+            )
             console.log("\nThere were warnings:\n" + warning_texts.join("\n"))
           }
         })
@@ -99,7 +105,7 @@ export const commandLineInterface = (
         y.positional("filename", {
           description: "Path of a json file containing departments to upload",
           type: "string",
-          demandOption: true
+          demandOption: true,
         }),
       importDepartmentsCommand
     )
@@ -110,7 +116,7 @@ export const commandLineInterface = (
         y.positional("filename", {
           description: "Path of a json file containing employees to upload",
           type: "string",
-          demandOption: true
+          demandOption: true,
         }),
       importEmployeesCommand
     )
@@ -122,7 +128,7 @@ export const commandLineInterface = (
           description:
             "Path of a Sympa HR export file containing departments to upload",
           type: "string",
-          demandOption: true
+          demandOption: true,
         }),
       parseAndImportDepartmentsCommand
     )
@@ -134,7 +140,7 @@ export const commandLineInterface = (
           description:
             "Path of a Sympa HR export file containing employees to upload",
           type: "string",
-          demandOption: true
+          demandOption: true,
         }),
       parseAndImportEmployeesCommand
     )
@@ -146,7 +152,7 @@ export const commandLineInterface = (
         y.positional("filename", {
           description: "Path of a json file containing absences to upload",
           type: "string",
-          demandOption: true
+          demandOption: true,
         }),
       importAbsencesCommand
     )
@@ -158,7 +164,7 @@ export const commandLineInterface = (
         y.positional("filename", {
           description: "Path of a json file containing cost centers to upload",
           type: "string",
-          demandOption: true
+          demandOption: true,
         }),
       importCostCentersCommand
     )

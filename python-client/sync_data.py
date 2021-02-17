@@ -136,3 +136,7 @@ for r in results['processingStatusWithVerify']:
     print("Status    : " + r['importStatus'])
     if r['importStatus'] == 'FAILURE':
         print("Error     : " + r['error'])
+    if r['warnings']:
+        print("\nThere were warnings:")
+        for warning in r['warnings']:
+            print(warning['warning'], warning['externalId'])

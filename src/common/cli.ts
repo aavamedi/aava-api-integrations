@@ -2,7 +2,7 @@
 import fs from "fs"
 import yargs from "yargs"
 import { promisify } from "util"
-import { ProcessingStatus } from "../../generated/aava-api-types"
+import { ProcessingState, ProcessingStatus } from "../../generated/aava-api-types"
 
 export const readData = <T>(filename: string): T => {
   if (!fs.existsSync(filename)) {
@@ -21,6 +21,12 @@ export const readData = <T>(filename: string): T => {
 
 type StatusCommand = (messageIds: string[]) => Promise<ProcessingStatus[]>
 
+const allImportsAreFinished = (statuses: ProcessingStatus[]) : Boolean =>
+  !statuses.some(
+    s => s.importStatus !== ProcessingState.Done &&
+    s.importStatus !== ProcessingState.Failure
+  )
+
 export const waitForProcessingResult = async (
   result: Promise<string[]>,
   statusCommand: StatusCommand
@@ -37,13 +43,15 @@ export const waitForProcessingResult = async (
       const statuses = await statusCommand(messageIds)
       const states = statuses.map(s => s.importStatus)
       console.log(`Processing status: ${states.join(',')} (${20 - times}/20)`)
-      if (!statuses.some(s => s.importStatus !== "DONE" && s.importStatus !== "FAILURE")) {
+      if (allImportsAreFinished(statuses)) {
         statuses.forEach(s => {
-          if (s.error !== null) console.log("\nError in request " + s.messageId + ": " + s.error)
+          if (s.error !== null) {
+            console.log("\nError in request " + s.messageId + ": " + s.error)
+          }
+
           if (Array.isArray(s.warnings)) {
-            console.log("\nThere were warnings:")
-            s.warnings.forEach(w => console.log(w.warning + " " + w.externalId))
-            console.log("\n")
+            const warning_texts = s.warnings.map(w => w.warning + " " + w.externalId)
+            console.log("\nThere were warnings:\n" + warning_texts.join("\n"))
           }
         })
         break

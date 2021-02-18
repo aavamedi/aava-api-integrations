@@ -8,7 +8,7 @@ import {
   EmployeeInput,
   AbsenceInput,
   ProcessingStatus,
-  CostCenterInput
+  CostCenterInput,
 } from "../../generated/aava-api-types"
 import { stdout } from "process"
 
@@ -21,8 +21,8 @@ const getApolloClient = async (
     fetch,
     uri: `${configuration.aavaApiServer}`,
     headers: {
-      Authorization: bearerToken
-    }
+      Authorization: bearerToken,
+    },
   })
 }
 
@@ -35,7 +35,7 @@ export const helloWorld = async (
       {
         hello
       }
-    `
+    `,
   })
   assertNoErrors(result)
   return result.data.hello ? "yes" : "no"
@@ -65,8 +65,8 @@ export const importDepartments = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      departments
-    }
+      departments,
+    },
   })
   assertNoErrors(result)
   stdout.write("done\n")
@@ -97,8 +97,8 @@ export const importEmployees = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      employees
-    }
+      employees,
+    },
   })
   assertNoErrors(result)
   stdout.write("done\n")
@@ -129,8 +129,8 @@ export const importAbsences = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      absences
-    }
+      absences,
+    },
   })
   assertNoErrors(result)
   stdout.write("done\n")
@@ -161,8 +161,8 @@ export const importCostCenters = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      costCenters
-    }
+      costCenters,
+    },
   })
   assertNoErrors(result)
   stdout.write("done\n")
@@ -174,26 +174,29 @@ export const getProcessingStatusCommand = (
 ) => {
   return async (messageIds: string[]): Promise<ProcessingStatus[]> => {
     const client = await getApolloClient(configuration)
-    const result = await client.query<{ processingStatusWithVerify: ProcessingStatus[] }>(
-      {
-        query: gql`
-          query getProcessingStatus($organizationId: ID!, $messageIds: [ID!]!) {
-            processingStatusWithVerify(
-              organizationExternalId: $organizationId
-              messageIds: $messageIds
-            ) {
-              importStatus,
-              error,
-              warnings { warning, externalId }
+    const result = await client.query<{
+      processingStatusWithVerify: ProcessingStatus[]
+    }>({
+      query: gql`
+        query getProcessingStatus($organizationId: ID!, $messageIds: [ID!]!) {
+          processingStatusWithVerify(
+            organizationExternalId: $organizationId
+            messageIds: $messageIds
+          ) {
+            importStatus
+            error
+            warnings {
+              warning
+              externalId
             }
           }
-        `,
-        variables: {
-          organizationId: configuration.organizationId,
-          messageIds
         }
-      }
-    )
+      `,
+      variables: {
+        organizationId: configuration.organizationId,
+        messageIds,
+      },
+    })
     assertNoErrors(result)
     return result.data.processingStatusWithVerify
   }

@@ -21,8 +21,8 @@ const makeAuthorizedRequest = async <T>(
     payload,
     {
       headers: {
-        Authorization: await getBearerToken(configuration)
-      }
+        Authorization: await getBearerToken(configuration),
+      },
     }
   )
   assertNoErrors(response.data)
@@ -69,8 +69,8 @@ export const importDepartments = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      departments
-    }
+      departments,
+    },
   }
   const messageId = (
     await makeAuthorizedRequest<{
@@ -100,8 +100,8 @@ export const importEmployees = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      employees
-    }
+      employees,
+    },
   }
   const messageId = (
     await makeAuthorizedRequest<{ importEmployees: { messageId: string } }>(
@@ -132,8 +132,8 @@ export const importAbsences = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      absences
-    }
+      absences,
+    },
   }
   const messageId = (
     await makeAuthorizedRequest<{ importAbsences: { messageId: string } }>(
@@ -164,8 +164,8 @@ export const importCostCenters = async (
     `,
     variables: {
       organizationId: configuration.organizationId,
-      costCenters
-    }
+      costCenters,
+    },
   }
   const messageId = (
     await makeAuthorizedRequest<{ importCostCenters: { messageId: string } }>(
@@ -187,12 +187,15 @@ export const getProcessingStatusCommand = (
         organizationExternalId: "${configuration.organizationId}"
         messageIds: [${messageIds.map(m => `"${m}"`).join(",")}]
       ) {
-        importStatus,
-        error,
-        warnings { warning, externalId }
+        importStatus
+        error
+        warnings {
+          warning
+          externalId
+        }
       }
     }
-  `
+  `,
     }
     const response = await makeAuthorizedRequest<{
       processingStatusWithVerify: ProcessingStatus[]

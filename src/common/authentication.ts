@@ -15,8 +15,8 @@ export const getBearerToken = async (
     headers: {
       Accept: "application/json",
       Authorization: `Basic ${basicAuth}`,
-      "Content-Type": "application/x-www-form-urlencoded"
-    }
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
   }
 
   const payload = "grant_type=client_credentials&scope=api:read"

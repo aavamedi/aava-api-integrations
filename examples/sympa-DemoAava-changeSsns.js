@@ -700,7 +700,7 @@ const tempSSNs = [
   "231150-952A",
   "270228-965C",
   "170145-972R",
-  "271023-971R"
+  "271023-971R",
 ]
 
 const main = async () => {
@@ -720,7 +720,7 @@ const main = async () => {
     "output.json",
     JSON.stringify({
       "@odata.context": "https://api.az-sympa.com/api/$metadata#DemoAava",
-      value: result
+      value: result,
     })
   )
 }

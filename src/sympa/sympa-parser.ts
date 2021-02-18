@@ -2,7 +2,7 @@ import { readData } from "../common/cli"
 import {
   DemoAava as Employee,
   DemoAavaDepartments as Department,
-  Employments__DemoAava__TYPE
+  Employments__DemoAava__TYPE,
 } from "../../generated/sympa-types"
 import { EmployeeInput, DepartmentInput } from "../../generated/aava-api-types"
 import { parsePhoneNumber } from "libphonenumber-js"
@@ -85,17 +85,17 @@ const sympaEmployeeToEmployeeInput = (employee: Employee): EmployeeInput => {
       return {
         externalId: d.departmentId,
         startDate: d.startDate,
-        endDate: d.endDate
+        endDate: d.endDate,
       }
     }),
     supervisors: employee.supervisor
       ? [
           {
             externalId: employee.supervisor,
-            startDate: sortedEmployments[0].startDate // Note: supervisor history is unavailable
-          }
+            startDate: sortedEmployments[0].startDate, // Note: supervisor history is unavailable
+          },
         ]
-      : []
+      : [],
   }
 }
 
@@ -105,8 +105,8 @@ const sympaDepartmentToDepartmentInput = (
   return {
     externalId: department.externalId,
     names: {
-      fi: department.name
-    }
+      fi: department.name,
+    },
   }
 }
 

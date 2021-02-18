@@ -26,7 +26,7 @@ type StatusCommand = (messageIds: string[]) => Promise<ProcessingStatus[]>
 
 const allImportsAreFinished = (statuses: ProcessingStatus[]): Boolean =>
   !statuses.some(
-    (s) =>
+    s =>
       s.importStatus !== ProcessingState.Done &&
       s.importStatus !== ProcessingState.Failure
   )
@@ -45,17 +45,17 @@ export const waitForProcessingResult = async (
     let times = 20
     while (times-- > 0) {
       const statuses = await statusCommand(messageIds)
-      const states = statuses.map((s) => s.importStatus)
+      const states = statuses.map(s => s.importStatus)
       console.log(`Processing status: ${states.join(",")} (${20 - times}/20)`)
       if (allImportsAreFinished(statuses)) {
-        statuses.forEach((s) => {
+        statuses.forEach(s => {
           if (s.error) {
             console.log(`\nError in request ${s.messageId}: ${s.error}`)
           }
 
           if (Array.isArray(s.warnings)) {
             const warning_texts = s.warnings.map(
-              (w) => w.warning + " " + w.externalId
+              w => w.warning + " " + w.externalId
             )
             console.log(`\nThere were warnings:\n${warning_texts.join("\n")}`)
           }
@@ -101,7 +101,7 @@ export const commandLineInterface = (
     .command(
       "departments <filename>",
       "Send departments to Aava-API",
-      (y) =>
+      y =>
         y.positional("filename", {
           description: "Path of a json file containing departments to upload",
           type: "string",
@@ -112,7 +112,7 @@ export const commandLineInterface = (
     .command(
       "employees <filename>",
       "Send employees to Aava-API",
-      (y) =>
+      y =>
         y.positional("filename", {
           description: "Path of a json file containing employees to upload",
           type: "string",
@@ -123,7 +123,7 @@ export const commandLineInterface = (
     .command(
       "sympa-departments <filename>",
       "Parse departments exported from Sympa HR and send results to Aava-API",
-      (y) =>
+      y =>
         y.positional("filename", {
           description:
             "Path of a Sympa HR export file containing departments to upload",
@@ -135,7 +135,7 @@ export const commandLineInterface = (
     .command(
       "sympa-employees <filename>",
       "Parse employees exported from Sympa HR and send results to Aava-API",
-      (y) =>
+      y =>
         y.positional("filename", {
           description:
             "Path of a Sympa HR export file containing employees to upload",
@@ -148,7 +148,7 @@ export const commandLineInterface = (
     .command(
       "absences <filename>",
       "Send absences to Aava-API",
-      (y) =>
+      y =>
         y.positional("filename", {
           description: "Path of a json file containing absences to upload",
           type: "string",
@@ -160,7 +160,7 @@ export const commandLineInterface = (
     .command(
       "cost-centers <filename>",
       "Send cost centers to Aava-API",
-      (y) =>
+      y =>
         y.positional("filename", {
           description: "Path of a json file containing cost centers to upload",
           type: "string",

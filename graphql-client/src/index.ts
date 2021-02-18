@@ -4,24 +4,24 @@ import {
   importEmployees,
   importAbsences,
   getProcessingStatusCommand,
-  importCostCenters
+  importCostCenters,
 } from "./graphql-client"
 import yargs from "yargs"
 import {
   DepartmentInput,
   EmployeeInput,
   AbsenceInput,
-  CostCenterInput
+  CostCenterInput,
 } from "../../generated/aava-api-types"
 import { readConfiguration } from "../../src/common/configuration"
 import {
   parseDepartmentData,
-  parseEmployeeData
+  parseEmployeeData,
 } from "../../src/sympa/sympa-parser"
 import {
   readData,
   waitForProcessingResult,
-  commandLineInterface
+  commandLineInterface,
 } from "../../src/common/cli"
 
 const aavaApiIntegrationsConfiguration = readConfiguration()

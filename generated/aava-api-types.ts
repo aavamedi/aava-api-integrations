@@ -177,6 +177,11 @@ export type ImportPushResponse = {
   messageId?: Maybe<Scalars['MediumString']>,
 };
 
+export enum InternalOrganization {
+  Aava = 'aava',
+  Pikkujatti = 'pikkujatti'
+}
+
 export enum Language {
   Fi = 'fi',
   Sv = 'sv',
@@ -308,6 +313,13 @@ export type ProcessingStatus = {
   error?: Maybe<Scalars['String']>,
   organizationExternalId?: Maybe<Scalars['ID']>,
   timestamp?: Maybe<Scalars['Date']>,
+  warnings?: Maybe<Array<ProcessingWarning>>,
+};
+
+export type ProcessingWarning = {
+   __typename?: 'ProcessingWarning',
+  warning: Scalars['String'],
+  externalId?: Maybe<Scalars['String']>,
 };
 
 export type Query = {
@@ -322,6 +334,11 @@ export type QueryProcessingStatusWithVerifyArgs = {
   messageIds: Array<Scalars['ID']>,
   organizationExternalId: Scalars['ID']
 };
+
+export enum QueryResult {
+  Success = 'success',
+  Failure = 'failure'
+}
 
 
 

@@ -2,6 +2,7 @@
 import axios from "axios"
 import { AavaApiIntegrationsConfiguration } from "../../src/common/configuration"
 import { getBearerToken } from "../../src/common/authentication"
+import { ProcessingStatus } from "../../generated/aava-api-types"
 
 interface GraphQLHTTPResponse<T> {
   data: T
@@ -178,7 +179,7 @@ export const importCostCenters = async (
 export const getProcessingStatusCommand = (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
-  return async (messageIds: string[]): Promise<string[]> => {
+  return async (messageIds: string[]): Promise<ProcessingStatus[]> => {
     const payload = {
       query: `
     query {
@@ -186,16 +187,16 @@ export const getProcessingStatusCommand = (
         organizationExternalId: "${configuration.organizationId}"
         messageIds: [${messageIds.map(m => `"${m}"`).join(",")}]
       ) {
-        importStatus
+        importStatus,
+        error,
+        warnings { warning, externalId }
       }
     }
   `
     }
     const response = await makeAuthorizedRequest<{
-      processingStatus: { importStatus: string }[]
+      processingStatusWithVerify: ProcessingStatus[]
     }>(configuration, payload)
-    return response.data.processingStatus.map(
-      ({ importStatus }) => importStatus
-    )
+    return response.data.processingStatusWithVerify
   }
 }

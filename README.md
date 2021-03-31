@@ -26,7 +26,7 @@ The reason for including this implementation is merely to demonstrate that it _c
 
 ## Python client
 
-Python client is a standalone solution that relies on GraphQL-python (gql) library. Accessing Aava API facilities
+Python client is a standalone solution that relies on GraphQL-python (gql) library. Accessing Aava-API facilities
 is ready to use as is, so only data retrieval modules need to be written and configured. An included sample module
 uses hard coded values to demonstrate how the data is structured.
 

@@ -1,7 +1,6 @@
 import ApolloClient, { gql } from "apollo-boost"
 import fetch from "cross-fetch"
 import { AavaApiIntegrationsConfiguration } from "../../src/common/configuration"
-import { getBearerToken } from "../../src/common/authentication"
 import { ExecutionResult } from "graphql"
 import {
   DepartmentInput,
@@ -15,13 +14,11 @@ import { stdout } from "process"
 const getApolloClient = async (
   configuration: AavaApiIntegrationsConfiguration
 ) => {
-  const bearerToken = await getBearerToken(configuration)
-
   return new ApolloClient({
     fetch,
     uri: `${configuration.aavaApiServer}`,
     headers: {
-      Authorization: bearerToken
+      "X-API-key": `${configuration.clientId}:${configuration.clientSecret}`
     }
   })
 }
@@ -174,26 +171,29 @@ export const getProcessingStatusCommand = (
 ) => {
   return async (messageIds: string[]): Promise<ProcessingStatus[]> => {
     const client = await getApolloClient(configuration)
-    const result = await client.query<{ processingStatusWithVerify: ProcessingStatus[] }>(
-      {
-        query: gql`
-          query getProcessingStatus($organizationId: ID!, $messageIds: [ID!]!) {
-            processingStatusWithVerify(
-              organizationExternalId: $organizationId
-              messageIds: $messageIds
-            ) {
-              importStatus,
-              error,
-              warnings { warning, externalId }
+    const result = await client.query<{
+      processingStatusWithVerify: ProcessingStatus[]
+    }>({
+      query: gql`
+        query getProcessingStatus($organizationId: ID!, $messageIds: [ID!]!) {
+          processingStatusWithVerify(
+            organizationExternalId: $organizationId
+            messageIds: $messageIds
+          ) {
+            importStatus
+            error
+            warnings {
+              warning
+              externalId
             }
           }
-        `,
-        variables: {
-          organizationId: configuration.organizationId,
-          messageIds
         }
+      `,
+      variables: {
+        organizationId: configuration.organizationId,
+        messageIds
       }
-    )
+    })
     assertNoErrors(result)
     return result.data.processingStatusWithVerify
   }

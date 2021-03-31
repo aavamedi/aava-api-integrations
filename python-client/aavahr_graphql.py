@@ -1,35 +1,6 @@
 import json
-import requests
-from base64 import b64encode
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
-
-
-def get_bearer_token(parameters: dict) -> dict:
-    """
-    Retrieves the bearer token that will be needed for all requests to Aava API
-    In this and the following functions the 'parameters' variable must contain
-    a dictionary object with the parameters read from properties.json file
-
-    Args:
-        parameters (dict): Parameters for connecting to Aava API (see properties-template.json)
-
-    Returns:
-        dict: Bearer Token for making requests; a dictionary object, the key for token is 'access_token'
-    """
-
-    basic_auth = b64encode(str.encode(
-        parameters['clientId'] + ':' + parameters['clientSecret']))
-    hdrs = {
-        'Accept': "application/json",
-        'Authorization': 'Basic ' + basic_auth.decode('utf-8'),
-        'Content-Type': "application/x-www-form-urlencoded"
-    }
-    payload = "grant_type=client_credentials&scope=api:read"
-    resp = requests.post(
-        parameters['aavaApiServer'] + '/auth/token', data=payload, headers=hdrs)
-    if resp.status_code == 200:
-        return json.loads(resp.text)
 
 
 def import_departments(parameters: dict, departments: dict) -> dict:
@@ -59,7 +30,7 @@ def import_departments(parameters: dict, departments: dict) -> dict:
     '''
     client = Client(transport=RequestsHTTPTransport(
         url=parameters['aavaApiServer'] + '/hr',
-        headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
+        headers={'X-API-key': parameters['clientId'] + ':' + parameters['clientSecret']})
     )
 
     query = gql(mutation)
@@ -99,7 +70,7 @@ def import_cost_centers(parameters: dict, costCenters: dict) -> dict:
     '''
     client = Client(transport=RequestsHTTPTransport(
         url=parameters['aavaApiServer'] + '/hr',
-        headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
+        headers={'X-API-key': parameters['clientId'] + ':' + parameters['clientSecret']})
     )
 
     query = gql(mutation)
@@ -139,7 +110,7 @@ def import_employees(parameters: dict, employees: dict) -> dict:
     '''
     client = Client(transport=RequestsHTTPTransport(
         url=parameters['aavaApiServer'] + "/hr",
-        headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
+        headers={'X-API-key': parameters['clientId'] + ':' + parameters['clientSecret']})
     )
 
     query = gql(mutation)
@@ -179,7 +150,7 @@ def import_absences(parameters: dict, absences) -> dict:
     '''
     client = Client(transport=RequestsHTTPTransport(
         url=parameters['aavaApiServer'] + "/hr",
-        headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
+        headers={'X-API-key': parameters['clientId'] + ':' + parameters['clientSecret']})
     )
 
     query = gql(mutation)
@@ -228,7 +199,7 @@ def get_statuses(parameters: dict, message_ids: list) -> dict:
     ''')
     client = Client(transport=RequestsHTTPTransport(
         url=parameters['aavaApiServer'] + "/hr",
-        headers={'Authorization': 'Bearer ' + parameters['bearerToken']})
+        headers={'X-API-key': parameters['clientId'] + ':' + parameters['clientSecret']})
     )
 
     variables = {

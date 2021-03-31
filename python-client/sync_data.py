@@ -63,13 +63,6 @@ if '--help' in argv:
     ''')
     exit()
 
-# Get an access token for making requests to Aava API
-resp = api.get_bearer_token(props)
-if resp is None:
-    print('Error fetching authentication token, please check properties')
-    exit()
-props['bearerToken'] = resp['access_token']
-
 message_ids = []
 
 if '-sd' not in argv and '--suppress_deps' not in argv:

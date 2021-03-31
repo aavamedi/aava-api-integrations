@@ -1,4 +1,4 @@
 [
-  { "externalId": "a1", "names": { "fi": "Asdf 1" }, "code": "ASDF-A1" },
-  { "externalId": "a2", "names": { "fi": "Asdf 2" }, "code": "ASDF-A2" }
+  { "externalId": "a1", "names": { "fi": "Asdf 1" }, "code": "ASDF-1" },
+  { "externalId": "a2", "names": { "fi": "Asdf 2" }, "code": "ASDF-2" }
 ]

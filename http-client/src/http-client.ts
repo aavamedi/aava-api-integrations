@@ -1,7 +1,6 @@
 // tslint:disable: no-console
 import axios from "axios"
 import { AavaApiIntegrationsConfiguration } from "../../src/common/configuration"
-import { getBearerToken } from "../../src/common/authentication"
 import { ProcessingStatus } from "../../generated/aava-api-types"
 
 interface GraphQLHTTPResponse<T> {
@@ -21,7 +20,7 @@ const makeAuthorizedRequest = async <T>(
     payload,
     {
       headers: {
-        Authorization: await getBearerToken(configuration)
+        "X-API-key": `${configuration.clientId}:${configuration.clientSecret}`
       }
     }
   )
